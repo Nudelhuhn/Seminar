@@ -1,0 +1,107 @@
+\documentclass[conference]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+
+\begin{document}
+
+\title{Seminar - Collective navigation of a multi-robot system in an unknown environment}
+\author{\IEEEauthorblockN{Gregor Germerodt}
+\IEEEauthorblockA{Hochschule Trier - Trier University of Applied Sciences\\
+E-Mail: grgr3403@hochschule-trier.de\\
+Themensteller und Betreuer: Prof. Dr. Jürgen Graf\\
+Cognitive Systems and Robotics}}
+
+\maketitle
+
+
+\begin{abstract}
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+\end{abstract}
+
+
+\section{Introduction}
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+
+
+\section{Related Work}
+\cite{Olcay.2020} In recent years, the problem of autonomous navigation for multi-robot systems in unknown and complex environments 
+has become an active research field. Classical approaches often rely on global maps and predefined information about the environment, 
+which makes them inflexible when sudden changes or unknown obstacles appear. To overcome this limitation, numerous local navigation 
+methods have been proposed. These include Simultaneous Localization and Mapping (SLAM) algorithms that allow robots to build maps 
+while moving, and potential field-based methods, where artificial attraction, repulsion and alignment forces [16-20] are used to 
+guide agents through environments. While potential fields are computationally efficient, similar approaches suffer from local 
+minima problems, like in concave structures [21-23]. Various improvements have addressed this issue through escape maneuvers like 
+spiral or elliptical motions around obstacles [24-25] or through reactive rotational forces [27]. Another research direction 
+involves cooperative decentralized navigation, where robots exchange information within their local communication range [28-29]. 
+Studies have explored swarm-inspired behavior based on flocking principles such as cohesion, separation, and alignment [4]. These 
+decentralized strategies are scalable and robust but often struggle in environments containing narrow passages or complex obstacle 
+configurations. Model Predictive Control (MPC) [31] has also been considered for such problems but is typically too computationally 
+intensive for real-time multi-agent scenarios. Against this backdrop, the work of Olcay et al. aims to propose a decentralized, 
+potential field-based navigation framework for multi-robot systems operating in unknown environments, without requiring global 
+information or extensive computational resources.
+
+
+\section{Methods}
+\cite{Olcay.2020} The authors present a decentralized navigation framework where each robot operates as a point mass in a 2D plane, 
+controlled by a set of differential equations for position and velocity. The control input is composed of three main components: one 
+for maintaining swarm-like flocking behavior, one for obstacle avoidance and one for navigation towards a shared goal position. To 
+model the swarm interactions, each robot detects neighboring robots within a defined communication radius and interacts with them based 
+on potential functions that encode attraction, repulsion, and alignment forces. To ensure smooth behavior, a sigma-norm is used to avoid 
+singularities in the potential field calculations.
+
+For obstacle avoidance, each robot uses range sensors with a limited detection radius. Once an obstacle is detected within a certain 
+distance, the robot applies repulsive forces to maintain a safe margin. To avoid local minima near concave obstacles, the authors 
+implement a tangential navigation strategy: when a robot detects an obstacle, it computes a virtual goal position tangentially offset 
+from the direct path to the goal. This allows the robot to follow the obstacle's boundary while gradually progressing toward the goal.
+
+When navigating around corners, if a robot detects two distinct obstacle points simultaneously, it identifies the presence of a concave 
+corner. The robot then determines a new temporary virtual goal, strategically placed to facilitate a smooth turn. Similarly, for obstacle 
+endpoints where the robot loses contact with the boundary, it initiates a controlled circular motion around the endpoint based on the 
+last known obstacle point, maintaining group cohesion and avoiding local minima.
+
+To extend this single-robot navigation framework to multi-robot systems, a communication protocol is introduced, allowing robots to 
+share information about detected obstacles, endpoints, and corners. Each robot maintains a status variable indicating its current 
+behavior (e.g., moving to goal, tangential navigation, corner avoidance) and uses a relevance function to prioritize received 
+information. This function takes into account the information's age, spatial proximity, and the sender's status. Only highly relevant 
+information influences the robot's decision-making, enabling decentralized, coordinated group maneuvers while preserving individual autonomy.
+
+Additionally, mechanisms are implemented to handle group cohesion at obstacle endpoints through a conditional braking system, where 
+the robot furthest behind in a circular maneuver signals the group to resume normal movement. A watchdog timer is also introduced to 
+prevent deadlocks: if a robot's speed drops below a threshold for a prolonged period, it resets its navigation status to resume free movement.
+
+
+\section{Analysis/Experiments/Proofs}
+\cite{Olcay.2020} To evaluate the performance of their navigation framework, the authors conduct a series of simulations with varying 
+group sizes and environmental layouts. In one scenario, 12 robots must traverse a zigzag-shaped obstacle. The simulation results 
+demonstrate that the robots successfully avoid collisions, detect corners, and navigate obstacle endpoints through coordinated group 
+maneuvers. The average speed of the swarm drops at critical points, such as obstacle extremities, indicating the robots' tendency to 
+decelerate and maintain group cohesion while executing circular maneuvers.
+
+A second scenario involves navigating through a narrow corridor with scattered obstacles. Here, the robots' ability to react to 
+dynamic, locally perceived obstacles and coordinate with nearby agents enables them to maintain a consistent formation and avoid 
+collisions despite the tight space.
+
+The authors further test scalability by increasing the number of robots to 20 and introducing more complex environments, including 
+two closely spaced circular obstacles, a semi-circular barrier, and numerous small obstacles scattered across the space. In these 
+cases, the robots exhibit robust collective behavior. Although minor fragmentation occurs in very dense obstacle fields, individual 
+robots continue to navigate safely towards the goal without collisions or deadlocks, demonstrating the system's resilience.
+
+The simulations confirm that the relevance-based communication strategy effectively prevents conflicting maneuvers and enables 
+decentralized consensus on navigation decisions. The conditional braking mechanism ensures that group members at the back can signal 
+when it is safe for the swarm to resume normal speed, preserving cohesion during complex maneuvers. The watchdog timer successfully 
+resolves potential deadlock situations without negatively affecting the overall mission success.
+
+Overall, the experimental results support the authors' claim that their decentralized, potential field-based multi-robot navigation 
+framework is effective for unknown, static environments. It balances local autonomy and collective coordination, handles concave 
+obstacles and narrow passages, and remains scalable to moderately large robot groups.
+
+
+\section{Conclusion}
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,literature}
+
+\end{document}

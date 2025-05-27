@@ -1,0 +1,34 @@
+{
+    "latex-workshop.latex.tools": [
+  {
+    "name": "latexmk",
+    "command": "latexmk",
+    "args": [
+      "-pdf",
+      "-interaction=nonstopmode",
+      "-synctex=1",
+      "%DOC%"
+    ]
+  },
+  {
+    "name": "bibtex",
+    "command": "bibtex",
+    "args": [
+      "%DOCFILE%"
+    ]
+  }
+],
+"latex-workshop.latex.recipes": [
+  {
+    "name": "LaTeX → BibTeX → LaTeX",
+    "tools": [
+      "latexmk",
+      "bibtex",
+      "latexmk",
+      "latexmk"
+    ]
+  }
+],
+"latex-workshop.latex.autoBuild.run": "never"
+
+}
