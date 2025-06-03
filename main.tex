@@ -1,6 +1,8 @@
 \documentclass[conference]{IEEEtran}
 \usepackage[utf8]{inputenc}
 \usepackage{url}
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
 
 \begin{document}
@@ -25,21 +27,19 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 
 
 \section{Related Work}
-\cite{Olcay.2020} In recent years, the problem of autonomous navigation for multi-robot systems in unknown and complex environments 
-has become an active research field. Classical approaches often rely on global maps and predefined information about the environment, 
-which makes them inflexible when sudden changes or unknown obstacles appear. To overcome this limitation, numerous local navigation 
-methods have been proposed. These include Simultaneous Localization and Mapping (SLAM) algorithms that allow robots to build maps 
-while moving, and potential field-based methods, where artificial attraction, repulsion and alignment forces [16-20] are used to 
-guide agents through environments. While potential fields are computationally efficient, similar approaches suffer from local 
-minima problems, like in concave structures [21-23]. Various improvements have addressed this issue through escape maneuvers like 
-spiral or elliptical motions around obstacles [24-25] or through reactive rotational forces [27]. Another research direction 
-involves cooperative decentralized navigation, where robots exchange information within their local communication range [28-29]. 
-Studies have explored swarm-inspired behavior based on flocking principles such as cohesion, separation, and alignment [4]. These 
-decentralized strategies are scalable and robust but often struggle in environments containing narrow passages or complex obstacle 
-configurations. Model Predictive Control (MPC) [31] has also been considered for such problems but is typically too computationally 
-intensive for real-time multi-agent scenarios. Against this backdrop, the work of Olcay et al. aims to propose a decentralized, 
-potential field-based navigation framework for multi-robot systems operating in unknown environments, without requiring global 
-information or extensive computational resources.
+Multi-Agenten-Systeme wie autonome und im Schwarm zusammenarbeitende Roboter, bringen in unbekannten Umgebungen Möglichkeiten wie 
+Kartierung, Erkundung oder Rettungsmissionen [1]. Um den Robotern dabei kollisionsfreie Wege zu gewährleisten, behandelt diese Arbeit 
+kollektive Navigation mit limitierter Sensorik und Kommunikationsfähigkeiten.
+Zur Robustheit des Systems, trägt das von der Natur abgesehene Schwarmverhalten einen Beitrag, welches hier in drei Regeln definiert 
+wurde: Cohesion, separation and alignment [4].
+Neben der globalen Bewegungsplanung, welche dem Roboter eine anfängliche Karte der Umgebung mit allen statischen Objekten bereitstellt, 
+wird hier die lokale Bewegungsplanung behandelt, welche auf eine sich ändernde Umgebung automatisch reagieren kann.
+Obwohl Simultaneous Localization And Mapping (SLAM) Methoden als herkömmliche lokale Navigationsstrategie erwähnt werden, wird hier 
+stattdessen eine dezentrale, potenzialfeldbasierte Navigation mit lokaler Sensorik und Nachbarschaftskommunikation genutzt. Das hilft 
+Robotern frühzeitig Entscheidungen zu treffen, zur Kollisionsvermeidung und die Systemgröße flexibel und skalierbar zu halten. 
+\[
+\mathcal{N}_i^{\alpha} = \left\{ j \in \mathcal{V} : \left\| \mathbf{p}_j - \mathbf{p}_i \right\| < r_c \right\}
+\]
 
 
 \section{Methods}
