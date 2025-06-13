@@ -3,6 +3,7 @@
 \usepackage{url}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{graphicx}
 \usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
 
 
@@ -41,7 +42,7 @@ system's scalability and flexibility.
 Im betrachteten Multi-Roboter-System werden die Roboter als Punktmassen 
 (d.h. ohne räumliche Ausdehnung, nur durch Position und Massepunkt) in einer 
 zweidimensionalen Umgebung modelliert. Die Systemdynamik basiert auf potenzialfeldbasierten 
-Kräften, wobei nur die Position und Geschwindigkeit jedes Roboters i betrachtet werden,
+Kräften, wobei nur die Position und Geschwindigkeit jedes Roboters $i$ betrachtet werden,
 $(p_i, v_i) \in \mathbb{R}^2 \times \mathbb{R}^2$.
 Die Bewegungsdynamik jedes Roboters $i$ wird durch folgende Differentialgleichungen beschrieben:
 \begin{equation}
@@ -58,7 +59,7 @@ Kommunikationsradius $r_c$ bidirektional interagieren. Die zeitabhängige und un
 \end{equation}
 mit $\mathcal{V} = \{1, \ldots, N\},\ N \in \mathbb{N}$, die Menge aller Roboter.
 Um Schwarmverhalten zu erzeugen, werden zwischen zwei Robotern Distanzwerte berechnet, 
-welche Abweichungsenergie, den Grad der Interaktion und Verbundenheit bestimmen.
+welche Abweichungsenergie, den Grad der Interaktion und Verbundenheit bestimmen ((4) bis (6)).
 
 Die Steuerkraft $u_i$ eines Roboters $i$ wird über die Gleichung
 \begin{equation}
@@ -66,13 +67,13 @@ u_i = u_i^\alpha + u_i^\beta + u_i^\gamma
 \end{equation}
 berechnet, wobei $u_i^\alpha$ für Schwarmverhalten, $u_i^\beta$ für 
 Hindernisvermeidung und $u_i^\gamma$ für Navigation sorgt. Das Schwarmverhalten 
-$u_i^\alpha$ setzt sich aus Abstands- und Geschwindigkeitsanpassungen zu Nachbarn 
-sowie deren Wirkstärke in Abhängigkeit vom Abstand zusammen.
+$u_i^\alpha$ setzt sich aus Abstands- und Geschwindigkeitsanpassungen zu Nachbarn (8) 
+sowie deren Wirkstärke in Abhängigkeit vom Abstand ((9) bis (10)) zusammen.
 
 Die Hindernisvermeidung $u_i^\beta$ wird definiert durch die Hindernispunkte 
-die ein Roboter erkennt, wie stark er von ihnen 
-abgestoßen wird und wie diese Abstoßungskraft in Abhängigkeit vom Abstand 
-berechnet wird. Die Steuerkraft für die Navigation $u_i^\gamma$ sorgt für eine Anziehung
+die ein Roboter erkennt (11), wie stark er von ihnen 
+abgestoßen wird (12) und wie diese Abstoßungskraft in Abhängigkeit vom Abstand 
+berechnet wird (13). Die Steuerkraft für die Navigation $u_i^\gamma$ sorgt für eine Anziehung
 des Roboters zum Ziel.
 
 
@@ -98,28 +99,50 @@ werden in diesem Abschnitt drei Methoden vorgestellt:
     \item Corner avoidance und
     \item Motion planning at obstacle extemities.
 \end{itemize}
-Grundsätzlich möchte sich der Roboter zum \textit{desired goal} bewegen und achtet 
+
+Grundsätzlich möchte sich ein Roboter zu einem festgelegtem Ziel bewegen und achtet 
 währenddessen in einem bestimmten Sensorradius \(r_{\mathrm{tan}}\) auf Hindernisse. Nimmt 
-er dabei ein Hindernis (repräsentiert durch einen Punkt \( \hat{p}_{i,k} \)) wahr, weicht 
-er unter Berücksichtigung der bewegungsrichtungsabhängigen Winkel \( \alpha_i \) und 
-\( \beta_i \) und sich daraus ergebenen Rotationswinkel \( \gamma_i \), die die Ausweichrichtung 
-(Gleichungen 15 bis 17) und ein virtuelles Ziel (18) bestimmen, parallel zur 
-Hinderniskante, also tangential aus. Über eine angepasste Steuerkraft 
-(19 ähnlich zu 14) wird der Roboter dabei zum \textit{virtual goal} beschleunigt.
+er dabei ein Hindernis (repräsentiert durch den Punkt \( \hat{p}_{i,k} \)) wahr, weicht 
+er parallel zur Hinderniskante, also tangential aus. Dies geschieht unter Berücksichtigung der bewegungsrichtungsabhängigen Winkel \( \alpha_i \) und 
+\( \beta_i \) und sich daraus ergebenen Rotationswinkel \( \gamma_i \). Diese Winkel bestimmen die Ausweichrichtung 
+((15) bis (17)) und ein virtuelles Ziel (18). Über eine angepasste Steuerkraft 
+((19) ähnlich zu (14)) wird der Roboter dabei zum virtuellen Ziel $p_i^v$ beschleunigt.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{Pictures/tangetial navigation.png}
+    \caption{tangential navigation}
+    \label{fig:bild-unterordner}
+\end{figure}
+
 Nimmt der Roboter zwei Hindernisse (repräsentiert durch zwei Punkte \( \hat{p}_{i,n} \) und \( \hat{p}_{i,n90} \)) 
 wahr, die eine Ecke bilden, wendet er das \textit{Corner Avoidance} Manöver an. 
 Dabei wird der Rotationswinkel \( \gamma_i \) um einen zusätzlichen Winkel \( \varepsilon_i \) 
-ergänzt, der sich aus den Tangentenrichtungen zu beiden Hindernispunkten 
-relativ zum Roboter berechnet (20, 21). Über Gleichung 22 wird anschließend 
-ein virtuelles Ziel bestimmt, das den Roboter aus der Ecke herausführt.
+ergänzt, der sich aus den Tangentenrichtungen $n$ und $n_{90}$ zu beiden Hindernispunkten 
+relativ zum Roboter berechnet ((20) bis (21)). Anschließend wird wieder
+ein virtuelles Ziel $p_i^v$ bestimmt, das den Roboter aus der Ecke herausführt (22).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{Pictures/corner avoidance maneuver.png}
+    \caption{corner avoidance maneuver}
+    \label{fig:bild-unterordner}
+\end{figure}
+
 Wenn der Roboter das Ende eines Hindernisses erreicht hat, führt er eine 
 kreisförmige Bewegung um das Ende herum aus. Dazu merkt er sich den letzten 
-Hindernispunkt \( \hat{p}_{i,e} \), der in seinem Sensorradius registriert wurde. Anhand der 
-Gleichung 23 und dem Winkel \( \beta_{i,e} \), welcher sich durch die tangentiale Navigation 
+Hindernispunkt \( \hat{p}_{i,e} \), der in seinem Sensorradius registriert wurde. Anhand  
+Gleichung (23) und dem Winkel \( \beta_{i} \), welcher sich durch die tangentiale Navigation 
 ergab, berechnet der Roboter in gleichen Abständen virtuelle Ziele (berechnet 
-durch Gleichung 24 und repräsentiert durch die Punkte \( p_{i,v1} \) bis \( p_d \)) und rotiert um einen 
-festen Winkel \( \delta \), bis der Winkel zwischen Bewegungs- und Zielvektor 
-(\textit{desired goal}) kleiner gleich \( \delta \) ist (25).
+durch Gleichung (24) und repräsentiert durch die Punkte \( p_i^{v1} \), \( p_i^{v2} \) und \( p_d \)) und rotiert um einen 
+festen Winkel \( \delta \), bis der Winkel zwischen Bewegungsvektor und virtuelles Ziel kleiner oder gleich \( \delta \) ist (25).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{Pictures/circular motion at obstacle ending.png}
+    \caption{circular motion at obstacle ending}
+    \label{fig:bild-unterordner}
+\end{figure}
 
 
 \section{The proposed navigation approach for a multi-robot system}
