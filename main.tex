@@ -146,7 +146,7 @@ festen Winkel \( \delta \), bis der Winkel zwischen Bewegungsvektor und virtuell
 
 
 \section{The proposed navigation approach for a multi-robot system}
-Der vorgestellte Ansatz erweitert den Navigationsalgorithmus für einzelne Roboter 
+Der nun vorgestellte Ansatz erweitert den Navigationsalgorithmus für einzelne Roboter 
 um eine Kommunikationsschnittstelle für die kollektive Bewegungsplanung mehrerer 
 Roboter. Der Zusammenhalt der Gruppe könnte gefährdet werden, wenn jeder Roboter 
 sein eigenes virtuelles Ziel verfolgt. Daher werden Informationen über virtuelle 
@@ -157,58 +157,69 @@ Informationen aus dem Kommunikationsnetzwerk).
 Das Kommunikationsnetzwerk besteht aus Informationspaketen, die sich in drei Typen 
 gliedern: Orientierung, Endpunkte und Ecken.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.25\textwidth]{Pictures/critical points.png}
+    \caption{circular motion at obstacle ending}
+    \label{fig:bild-unterordner}
+\end{figure}
+
 \textbf{Orientierung (Fig. 5):} Enthält den Winkel \( \theta_i \) zum aktuellen Ziel, den erkannten 
-Punkt \( \hat{p}_{i,k} \) auf dem Hindernis, den aktuellen Status des Roboter (Table 1) sowie den 
+Punkt \( \hat{p}_{i,k} \) auf dem Hindernis, den aktuellen Status des Roboters (alle Status in Table 1 erklärt) sowie den 
 Zeitpunkt der Hinderniserkennung.
 
 \textbf{Endpunkte (Fig. 6(a)):} Besteht aus dem zuletzt erkannten Punkt \( \hat{p}_{i,e} \), dem Winkel \( \omega_{i,e} \) 
 zwischen dem Normalenvektor vom Roboter zum Hindernis und der x-Achse des inertialen 
-Koordinatensystems sowie dem Zielwinkel \( \theta_{i,e} \) im Moment der Endpunkterkennung.
+Koordinatensystems\footnote{unbeschleunigtes und dem Trägheitsgesetz unterliegendes Koordinatensystem} sowie 
+dem Zielwinkel \( \theta_{i,e} \) im Moment der Endpunkterkennung.
 
 \textbf{Ecken (Fig. 6(b)):} Umfasst den Zielwinkel beim Eintritt (\( \theta_{i,\mathrm{ent}} \)) und Austritt 
-(\( \theta_{i,\mathrm{ex}} \)) aus der Ecke sowie den Eckpunkt \( \hat{p}_{i,c} \), der als Schnittpunkt zweier 
-Linien berechnet wird.
+(\( \theta_{i,\mathrm{ex}} \)) aus der Ecke sowie den Eckpunkt \( \hat{p}_{i,c} \), der als Schnittpunkt aus den
+erkannten Hindernislinien berechnet wird.
 
 Bevor ein Roboter eine Aktion anhand der gegebenen Orientierungsinformationen aus 
-dem Kommunikationsnetzwerk ausführt, berechnet er eine Relevanz-Funktion \( \mathrm{rel} \), 
+dem Kommunikationsnetzwerk ausführt, berechnet dessen Relevanz über die Funktion \( \mathrm{rel} \), 
 welche im Intervall \( ]-\infty, 10] \) liegt. Dabei steht \( \mathrm{rel}=10 \) für eine 
 sehr relevante und \( \mathrm{rel} \leq 0 \) für eine zu ignorierende Information. 
 Unterschieden wird dabei wie folgt:
 \begin{itemize}
-    \item \textbf{Alter der Information:} Die Gleichung
+    \item \textbf{Alter der Information:}
+    Die Gleichung
     \begin{equation}
     \mathrm{rel}_t = 10 - \frac{10 \cdot (t_k - \hat{t}^c)}{d_t}
     \end{equation}
-    bestimmt: je älter die Information, desto unwichtiger ist sie, mit \( t_k \)
-    gleich aktuelle Zeit, \( \hat{t}^c \) gleich Registrierungszeit der Information von einem 
-    anderen Roboter und \( d_t \in \mathbb{R} \) eine Konstante, die die Dauer 
-    beschreibt, in der Information positive Relevanz haben kann.
+    bestimmt: je älter die Information, desto unwichtiger ist sie, mit 
+    der aktuellen Zeit \( t_k \) und der Registrierungszeit \( \hat{t}^c \) der Information von einem 
+    anderen Roboter und \( d_t \in \mathbb{R} \) eine Konstante, die \( \mathrm{rel_t} \) ab einer
+    bestimmten Zeit negativ werden lässt.
     
-    \item \textbf{Distanz vom Hindernis:} Sollte das Hindernis in Bewegungsrichtung liegen, 
-    so ermittelt sich \( \mathrm{rel}_{\mathrm{dist}} \) mit 
+    \item \textbf{Distanz vom Hindernis:}
+    Sollte das Hindernis in Bewegungsrichtung liegen, 
+    so ermittelt sich die Relevanz der Distanz mit 
     \begin{equation}
     \mathrm{rel}_{\mathrm{dist}} = 10 - \frac{10 \cdot \| \hat{p}^c - p_i \|}{d_x}
     \end{equation}
-    mit \( d_x \in \mathbb{R} \) die maximale Distanz, die durch \( \| \hat{p}^c - p_i \| \) für eine positive 
-    Relevanz erforderlich ist. Liegt es dahinter, dann mit
+    mit \( d_x \in \mathbb{R} \) die maximale Distanz und \( \| \hat{p}^c - p_i \| \) der Abstand des Roboters ($p_i$) 
+    zum Hindernis ($\hat{p}^c$). Liegt es dahinter, dann mit
     \begin{equation}
     \mathrm{rel}_{\mathrm{dist}} = - \frac{10 \cdot \| \hat{p}^c - p_i \|}{d_x}
     \end{equation}
     und sollten keine Orientierungsinformationen gegeben sein, so 
     ist \( \mathrm{rel}_{\mathrm{dist}} = 0 \).
     
-    \item \textbf{Relevanz der Orientierung basierend auf dem vorherigen Zeitschritt:} Jeder 
-    Roboter erwartet für jeden Zeitschritt nur kleine Änderungen in der tangentialen 
+    \item \textbf{Relevanz der Orientierung basierend auf dem vorherigen Zeitschritt:}
+    Jeder Roboter erwartet für jeden Zeitschritt nur kleine Änderungen in der tangentialen 
     Navigation. Die Gleichung 
     \begin{equation}
     \mathrm{rel}_{\mathrm{exp}} = 10 - \frac{10 \cdot | \theta_i(t_k) - \theta^c |}{d_\theta}
     \end{equation}
     beschreibt die Relevanz der erwarteten Orientierung, wobei 
-    \( |\theta_i(t_k) - \theta^c| \) der Vergleich mit der aktuellen Zielorientierung und 
-    der neuen Orientierung ist und \( d_\theta \) die maximal erlaubte Winkeldifferenz für 
-    eine positive Relevanz ist.
+    \( |\theta_i(t_k) - \theta^c| \) der Vergleich mit der aktuellen Zielorientierung ($\theta_i(t_k)$) und 
+    der neuen Orientierung ($\theta^c$) ist und \( d_\theta \) die maximal erlaubte Winkeldifferenz, sodass
+    \( \mathrm{rel}_{\mathrm{exp}} > 0 \).
     
     \item \textbf{Auswertung des Senders:}
+    Empfangenen Informationen sind relevanter, wenn der Sender der Besitzer dieser Informationen ist.
     \begin{equation}
     \mathrm{rel}_o =
     \begin{cases}
@@ -218,39 +229,43 @@ Unterschieden wird dabei wie folgt:
     \end{equation}
     
     \item \textbf{Auswertung anhand des Status:}
+    Aktionen die den Roboter neu ausrichten, werden mit höchster Relevanz bewertet. Alle \textit{status} sind in Tabelle 1
+    nachsehbar.
     \begin{equation}
     \mathrm{rel}_{\mathrm{type}} =
     \begin{cases}
-    10, & \text{falls Status } c = 4 \text{ oder } 3 \\
-    5,  & \text{falls Status } c = 1 \\
-    0,  & \text{sonst}
+    10, & \text{if } status^c = 4 \vee status^c = 3 \\
+    5,  & \text{if } status^c = 1 \\
+    0,  & \text{otherwise}
     \end{cases}
     \end{equation}
 \end{itemize}
 
 Die endgültige Relevanz ergibt sich aus der Gleichung
 \begin{equation}
-\mathrm{rel}_n = \frac{c_{\mathrm{type}} \cdot \mathrm{rel}_{\mathrm{type}} + c_o \cdot \mathrm{rel}_o + c_{\mathrm{exp}} \cdot \mathrm{rel}_{\mathrm{exp}} + c_{\mathrm{dist}} \cdot \mathrm{rel}_{\mathrm{dist}} + c_t \cdot \mathrm{rel}_t}{c_{\mathrm{type}} + c_o + c_{\mathrm{exp}} + c_{\mathrm{dist}} + c_t}
+\scalebox{1.15}{$\overline{\mathrm{rel}}_n = \frac{c_{\mathrm{type}} \cdot \mathrm{rel}_{\mathrm{type}} + c_o \cdot \mathrm{rel}_o + c_{\mathrm{exp}} \cdot \mathrm{rel}_{\mathrm{exp}} + c_{\mathrm{dist}} \cdot \mathrm{rel}_{\mathrm{dist}} + c_t \cdot \mathrm{rel}_t}{c_{\mathrm{type}} + c_o + c_{\mathrm{exp}} + c_{\mathrm{dist}} + c_t}$}
 \end{equation}
 wobei die maximale Relevanz durch 
 \begin{equation}
 \mathrm{rel}_{\mathrm{max}} = \underset{\mathrm{rel}_n \in \mathcal{R}_i}{\mathrm{argmax}}(\mathrm{rel}_n)
 \end{equation}
-berechnet wird.
+berechnet wird, mit $n \in \mathcal{S}_i$, die Menge aller aus dem Netzwerk erhaltene Informationspakete und 
+$\mathcal{R}_i$ die Menge aller aus den Informationspaketen entnommenen Relevanzwerte für Roboter $i$.
 
 Ein Informationspaket ist für einen Roboter schließlich relevant, wenn die Bedingung
 \begin{equation}
 \mathrm{rel}_n \geq 0.95 \cdot \mathrm{rel}_{\mathrm{max}}
 \end{equation}
-erfüllt ist und passt daraufhin seine 
+erfüllt ist. Er passt daraufhin seine 
 Bewegungsrichtung für den nächsten Zeitschritt an. Sollten mehrere Informationspakete 
 diese Bedingung erfüllen, wird der Mittelwert daraus bestimmt.
 
-Weiterhin prüft ein Roboter seine Distanz zu den übermittelten Hindernispunkten mit 
-\begin{equation}
-d_s \leq \| p_i - \hat{p}_e^c \| \leq R_{\mathrm{rel}}
-\end{equation}
-und sieht diese Punkte dann als seine eigenen Hindernispunkte an, sollte 
+Zu übermittelten Ecken oder Endpunkten, prüft der Roboter seine Distanz $d_s$ mit
+\begin{align}
+d_s \leq \| p_i - \hat{p}_c^c \| \leq R_{\mathrm{rel}},\\
+d_s \leq \| p_i - \hat{p}_e^c \| \leq R_{\mathrm{rel}},
+\end{align}
+und sieht diese Punkte dann als seine eigenen Hindernispunkte an, sollten 
 sie innerhalb der maximalen Distanz \( R_{\mathrm{rel}} \in \mathbb{R} \) liegen.
 
 
