@@ -20,8 +20,8 @@ Cognitive Systems and Robotics}}
 
 
 \begin{abstract}
-Diese Arbeit stellt eine Zusammenfassung der Arbeit von Olcay (2020) dar. Alle Inhalte basieren
-auf diese Arbeit \cite{Olcay.2020} und dessen referenzierten Quellen wurden 
+Diese Arbeit stellt eine Zusammenfassung der Arbeit von Olcay (2020) \cite{Olcay.2020} dar. 
+Alle Inhalte basieren auf dieser Arbeit und dessen referenzierten Quellen wurden 
 an benötigten Stellen übernommen.
 
 Vorgestellt werden verschiedene Verfahren für die Bewegung von Robotern in unbekannten Umgebungen,
@@ -64,8 +64,8 @@ Die Bewegungsdynamik jedes Roboters $i$ wird durch folgende Differentialgleichun
     \dot{v}_i = u_i
     \label{eq:2}
 \end{equation}
-Die Position des Roboters ändert sich also mit seiner Geschwindigkeit (1) und diese wiederum 
-durch eine Steuerkraft (2).
+Die Position des Roboters ändert sich also mit seiner Geschwindigkeit \eqref{eq:1} und diese wiederum 
+durch eine Steuerkraft \eqref{eq:2}.
 Jeder Roboter kann nur mit benachbarten Robotern innerhalb eines festen 
 Kommunikationsradius $r_c$ bidirektional interagieren. Die zeitabhängige und ungerichtete 
 Nachbarschaft ist definiert durch
@@ -455,7 +455,7 @@ Linien zwischen den Robotern zeigen das aktive Kommunikationsnetzwerk an.
 Die Abbildungen geben Momentaufnahmen zu bestimmten Zeitpunkten bzw. 
 bei relevanten Ereignissen während der Simulation wieder.
 
-Im ersten Szenario (Fig.~\ref{fig:Sequential snapshots of 12 agents collectively navigating through a zigzag obstacle}) zeigen sich folgende Abläufe:
+Im ersten Szenario (Fig.~\ref{fig:Sequential snapshots of 12 robots collectively navigating through a zigzag obstacle}) zeigen sich folgende Abläufe:
 \begin{itemize}
 \item (a): Erkennung eines Hindernisses und Beginn der tangentialen Navigation
 \item (b): Erkennung eines Eckpunktes und Ausführung des \textit{corner avoidance maneuvers}
@@ -464,7 +464,7 @@ Im ersten Szenario (Fig.~\ref{fig:Sequential snapshots of 12 agents collectively
 \item (f): Erreichen des gewünschten Zielpunkts
 \end{itemize}
 
-Im zweiten Korridor-Szenario (Abbildung 15) kommen dieselben Verfahren zum Einsatz.
+Im zweiten Korridor-Szenario (Fig.~\ref{fig:Sequential snapshots of 12 robots collectively navigating through a corridor}) kommen dieselben Verfahren zum Einsatz.
 
 \subsection*{Guideline for parameter choice}
 Die Parameter der Relevanzfunktion (Gleichung 32) sollten in Abhängigkeit des 
@@ -488,12 +488,14 @@ höher gewichtet als \texttt{relt} und \texttt{reltype}.
 
 Die Effekte dieser unterschiedlichen Gewichtungen zeigen sich in den folgenden Abbildungen:
 \begin{itemize}
-\item Abbildung 16 zeigt ein \textit{squeezing maneuver}, bei dem sich die 
+\item Abbildung~\ref{fig:Sequential snapshots of 20 robots collectively navigating around two circular obstacles} 
+zeigt ein \textit{squeezing maneuver}, bei dem sich die 
 Robotergruppe zwischen zwei kreisförmigen Hindernissen hindurch bewegt.
-\item In Abbildung 17 ist zu erkennen, wie ein halbkreisförmiges Hindernis 
+\item In Abbildung~\ref{fig:Sequential snapshots of 20 robots collectively navigating around a semi circular obstacle} 
+ist zu erkennen, wie ein halbkreisförmiges Hindernis 
 die Gruppe aufteilt. Die Roboter korrigieren daraufhin ihre Bewegungsrichtung, 
 indem sie ihren aktuellen Aktionsstatus überprüfen und anpassen.
-\item Abbildung 18 veranschaulicht, dass durch die priorisierte 
+\item Abbildung~\ref{fig:Sequential snapshots of 20 robots collectively navigating around small circular obstacles} veranschaulicht, dass durch die priorisierte 
 Hindernisvermeidung eine Fragmentierung der Gruppe auftritt. 
 Dennoch erreichen letztlich alle Roboter das gewünschte Ziel.
 \end{itemize}
@@ -517,17 +519,185 @@ alternativen Netzwerkstrukturen für die Roboter befassen.
 
 
 \section*{Appendix}
+
 \subsection*{Equations, functions and conditions}
+\begin{equation}
+\| z \|_{\sigma} = \frac{1}{\epsilon} \left( \sqrt{1 + \epsilon \| z \|^2} - 1 \right)
+\label{eq:16}
+\end{equation}
+
+\begin{equation}
+\rho_h(z) =
+\begin{cases}
+1, & z \in [0, h) \\
+\frac{1}{2} \left( 1 + \cos \left( \pi \frac{z - h}{1 - h} \right) \right), & z \in [h, 1) \\
+0, & \text{otherwise}
+\end{cases}
+\label{eq:17}
+\end{equation}
+
+\begin{equation}
+a_{ij}(p) = \rho_h \left( \frac{\| p_j - p_i \|_{\sigma}}{r^{\alpha}} \right), \quad j \neq i
+\label{eq:18}
+\end{equation}
+
+\begin{equation}
+u^{\alpha}_i = c_{\alpha 1} \sum_{j \in N^{\alpha}_i} \phi^{\alpha} \left( \| p_j - p_i \|_{\sigma} \right) n_{ij}
++ c_{\alpha 2} \sum_{j \in N^{\alpha}_i} a_{ij}(p) (v_j - v_i)
+\label{eq:19}
+\end{equation}
+
+\begin{equation}
+\phi^{\alpha}(z) = \rho^{\alpha}_h \left( \frac{z}{r^{\alpha}} \right) \varphi(z - d^{\alpha})
+\label{eq:20}
+\end{equation}
+
+\begin{equation}
+\varphi(z) = \frac{1}{2} \left( (a + b) \sigma_1(z + c) + (a - b) \right)
+\label{eq:21}
+\end{equation}
+
+\begin{equation}
+N^{\beta}_i = \left\{ \hat{p}_{i,k} \;\big|\; \| \hat{p}_{i,k} - p_i \| < r_s \right\}
+\label{eq:22}
+\end{equation}
+
+\begin{equation}
+u^{\beta}_i = c_{\beta 1} \sum_{k \in N^{\beta}_i} \phi^{\beta} \left( \| \hat{p}_{i,k} - p_i \|_{\sigma} \right) \hat{n}_{i,k}
++ c_{\beta 2} \sum_{k \in N^{\beta}_i} b_{i,k}(p) (\hat{v}_{i,k} - v_i)
+\label{eq:23}
+\end{equation}
+
+\begin{equation}
+\phi^{\beta}(z) = \rho^{\beta}_h \left( \frac{z}{d^{\beta}} \right) \left( \sigma_1(z - d^{\beta}) - 1 \right)
+\label{eq:24}
+\end{equation}
+
+\begin{equation}
+u^{\gamma}_i = -c_{\gamma 1} \, \sigma_1(p_i - p_d) - c_{\gamma 2} \, v_i
+\label{eq:25}
+\end{equation}
+
+\begin{equation}
+\gamma_i =
+\begin{cases}
+\beta_i - \alpha_i - 90^\circ, & \text{if } \beta_i \geq 0^\circ \\
+\beta_i - \alpha_i + 90^\circ, & \text{if } \beta_i < 0^\circ
+\end{cases}
+\label{eq:26}
+\end{equation}
+
+\begin{equation}
+c_r =
+\begin{cases}
+-1, & \text{for clockwise rotation} \\
+1,  & \text{for counter-clockwise rotation}
+\end{cases}
+\label{eq:27}
+\end{equation}
+
+\begin{equation}
+\gamma_i = \beta_i - \alpha_i + c_r \cdot 90^\circ
+\label{eq:28}
+\end{equation}
+
+\begin{equation}
+p^{v}_i = p_i +
+\begin{pmatrix}
+\cos(\gamma_i) & -\sin(\gamma_i) \\
+\sin(\gamma_i) & \cos(\gamma_i)
+\end{pmatrix}
+(p_d - p_i)
+\label{eq:29}
+\end{equation}
+
+\begin{equation}
+u^{\gamma}_i = -c_{\gamma 1} \cdot \left( c_n \cdot \frac{p_i - p^v_i}{\| p_i - p^v_i \|} \right) - c_{\gamma 2} \, v_i
+\label{eq:30}
+\end{equation}
+
+\begin{equation}
+\gamma_i =
+\begin{cases}
+\beta_i - \alpha_i - \tau_i, & \text{if } \epsilon_i \geq 0^\circ \\
+\beta_i - \alpha_i + \tau_i, & \text{if } \epsilon_i < 0^\circ
+\end{cases}
+\label{eq:31}
+\end{equation}
+
+\begin{equation}
+\tau_i = | \epsilon_i | + 90^\circ
+\label{eq:32}
+\end{equation}
+
+\begin{equation}
+p^v_i = p_i +
+\begin{pmatrix}
+\cos(\gamma_i) & -\sin(\gamma_i) \\
+\sin(\gamma_i) & \cos(\gamma_i)
+\end{pmatrix}
+\begin{pmatrix}
+0.5 \cdot d_s \cdot \cos(\theta^d_i) \\
+0.5 \cdot d_s \cdot \sin(\theta^d_i)
+\end{pmatrix}
+\label{eq:33}
+\end{equation}
+
+\begin{equation}
+\gamma_i =
+\begin{cases}
++\delta, & \text{if } \beta_{i,e} \geq 0^\circ \\
+-\delta, & \text{if } \beta_{i,e} < 0^\circ
+\end{cases}
+\label{eq:34}
+\end{equation}
+
+\begin{equation}
+p^v_i = \hat{p}_{i,e} +
+\begin{pmatrix}
+\cos(\gamma_i) & -\sin(\gamma_i) \\
+\sin(\gamma_i) & \cos(\gamma_i)
+\end{pmatrix}
+n_{i,e}
+\label{eq:35}
+\end{equation}
+
+
+
 
 \subsection*{Figures and tables}
-\begin{figure*}[]
+\begin{figure*}[htbp]
     \centering
-    \includegraphics[width=1.0\textwidth]{Pictures/Sequential snapshots of 12 agents collectively navigating through a zigzag obstacle.png}
-    \caption{Sequential snapshots of 12 agents collectively navigating through a zigzag obstacle.}
-    \label{fig:Sequential snapshots of 12 agents collectively navigating through a zigzag obstacle}
+    \includegraphics[width=0.8\textwidth]{Pictures/Sequential snapshots of 12 robots collectively navigating through a zigzag obstacle.png}
+    \caption{Sequential snapshots of 12 robots collectively navigating through a zigzag obstacle.}
+    \label{fig:Sequential snapshots of 12 robots collectively navigating through a zigzag obstacle}
+\end{figure*}
+\begin{figure*}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Pictures/Sequential snapshots of 12 robots collectively navigating through a corridor.png}
+    \caption{Sequential snapshots of 12 robots collectively navigating through a corridor.}
+    \label{fig:Sequential snapshots of 12 robots collectively navigating through a corridor}
+\end{figure*}
+\begin{figure*}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Pictures/Sequential snapshots of 20 robots collectively navigating around two circular obstacles.png}
+    \caption{Sequential snapshots of 20 robots collectively navigating around two circular obstacles.}
+    \label{fig:Sequential snapshots of 20 robots collectively navigating around two circular obstacles}
+\end{figure*}
+\begin{figure*}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Pictures/Sequential snapshots of 20 robots collectively navigating around a semi circular obstacle.png}
+    \caption{Sequential snapshots of 20 robots collectively navigating around a semi circular obstacle.}
+    \label{fig:Sequential snapshots of 20 robots collectively navigating around a semi circular obstacle}
+\end{figure*}
+\begin{figure*}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Pictures/Sequential snapshots of 20 robots collectively navigating around small circular obstacles.png}
+    \caption{Sequential snapshots of 20 robots collectively navigating around small circular obstacles.}
+    \label{fig:Sequential snapshots of 20 robots collectively navigating around small circular obstacles}
 \end{figure*}
 
-
+\clearpage
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,literature}
 
