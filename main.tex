@@ -20,18 +20,18 @@ Cognitive Systems and Robotics}}
 
 
 \begin{abstract}
-Diese Arbeit stellt eine Zusammenfassung der Arbeit von Olcay (2020) \cite{Olcay.2020} dar. 
-Alle Inhalte basieren auf dieser Arbeit und dessen referenzierten Quellen wurden 
-an benötigten Stellen übernommen.
+This paper is a summary of the work of Olcay (2020). 
+All content is based on this work and its referenced sources have been 
+incorporated where necessary.
 
-Vorgestellt werden verschiedene Verfahren für die Bewegung von Robotern in unbekannten Umgebungen,
-zur Kollisionsvermeidung und Zielerreichung anhand virtueller Kräfte. Zuerst werden die Verfahren
-für einen einzelnen Roboter erklärt und diese dann mit Hilfe eines Kommunikationsnetzwerk auf 
-ein Multi-Roboter-System erweitert.
+Various methods for the movement of robots in unknown environments are presented,
+for collision avoidance and target achievement using virtual forces. First, the methods
+for a single robot are explained and then extended to a multi-robot system with the 
+help of a communication network.
 \end{abstract}
 
 \section{Introduction}
-Multi-robot systems, such as autonomous robots collaborating in a swarm, 
+\cite{Olcay.2020} Multi-robot systems, such as autonomous robots collaborating in a swarm, 
 offer applications in unknown environments like mapping, exploration, or 
 rescue missions \cite{Stormont.null}. 
 To ensure collision-free paths, this work addresses 
@@ -50,12 +50,12 @@ for collision avoidance while ensuring scalability and flexibility of
 the system.
 
 \section{Theoretical background}
-Im betrachteten Multi-Roboter-System werden die Roboter als Punktmassen 
-(d.h. ohne räumliche Ausdehnung, nur durch Position und Massepunkt) in einer 
-zweidimensionalen Umgebung modelliert. Die Systemdynamik basiert auf potenzialfeldbasierten 
-Kräften, wobei nur die Position und Geschwindigkeit jedes Roboters $i$ betrachtet werden,
+In the multi-robot system under consideration, the robots are modeled as point masses 
+(i.e., without spatial extension, only by position and mass point) in a 
+two-dimensional environment. The system dynamics are based on potential field-based 
+forces, whereby only the position and velocity of each robot $i$ are taken into account,
 $(p_i, v_i) \in \mathbb{R}^2 \times \mathbb{R}^2$.
-Die Bewegungsdynamik jedes Roboters $i$ wird durch folgende Differentialgleichungen beschrieben:
+The motion dynamics of each robot $i$ are described by the following differential equations:
 \begin{equation}
     \dot{p}_i = v_i
     \label{eq:1}
@@ -64,67 +64,75 @@ Die Bewegungsdynamik jedes Roboters $i$ wird durch folgende Differentialgleichun
     \dot{v}_i = u_i
     \label{eq:2}
 \end{equation}
-Die Position des Roboters ändert sich also mit seiner Geschwindigkeit \eqref{eq:1} und diese wiederum 
-durch eine Steuerkraft \eqref{eq:2}.
-Jeder Roboter kann nur mit benachbarten Robotern innerhalb eines festen 
-Kommunikationsradius $r_c$ bidirektional interagieren. Die zeitabhängige und ungerichtete 
-Nachbarschaft ist definiert durch
+The position of the robot therefore changes with its velocity \eqref{eq:1}, which in turn changes 
+due to a control force \eqref{eq:2}.
+Each robot can only interact bidirectionally with neighboring robots within a fixed 
+communication radius $r_c$. The time-dependent and undirected 
+neighborhood is defined by
 \begin{equation}
     \mathcal{N}_i^\alpha = \{ j \in \mathcal{V} \; | \; \| p_j - p_i \| < r_c \}
     \label{eq:3}
 \end{equation}
-mit $\mathcal{V} = \{1, \ldots, N\},\ N \in \mathbb{N}$, die Menge aller Roboter.
-Um Schwarmverhalten zu erzeugen, werden zwischen zwei Robotern Distanzwerte berechnet, 
-welche Abweichungsenergie, den Grad der Interaktion und Verbundenheit bestimmen ((4) bis (6)).
+with $\mathcal{V} = \{1, \ldots, N\},\ N \in \mathbb{N}$, the set of all robots.
+To generate swarm behavior, distance values are calculated between two robots, 
+which determine the deviation energy, the degree of interaction, and connectedness 
+(\eqref{eq:16} to \eqref{eq:18}).
 
-Die Steuerkraft $u_i$ eines Roboters $i$ wird über die Gleichung
+The control force $u_i$ of a robot $i$ is calculated using the equation
 \begin{equation}
     u_i = u_i^\alpha + u_i^\beta + u_i^\gamma
     \label{eq:4}
 \end{equation}
-berechnet, wobei $u_i^\alpha$ für Schwarmverhalten, $u_i^\beta$ für 
-Hindernisvermeidung und $u_i^\gamma$ für Navigation sorgt. Das Schwarmverhalten 
-$u_i^\alpha$ setzt sich aus Abstands- und Geschwindigkeitsanpassungen zu Nachbarn (8) 
-sowie deren Wirkstärke in Abhängigkeit vom Abstand ((9) bis (10)) zusammen.
+where $u_i^\alpha$ is for swarm behavior, $u_i^\beta$ is for 
+obstacle avoidance, and $u_i^\gamma$ for navigation. The swarm behavior 
+$u_i^\alpha$ consists of distance and speed adjustments to neighbors 
+(\eqref{eq:19}) 
+and their effectiveness depending on the distance 
+(\eqref{eq:20} to \eqref{eq:21}).
 
-Die Hindernisvermeidung $u_i^\beta$ wird definiert durch die Hindernispunkte 
-die ein Roboter erkennt (11), wie stark er von ihnen 
-abgestoßen wird (12) und wie diese Abstoßungskraft in Abhängigkeit vom Abstand 
-berechnet wird (13). Die Steuerkraft für die Navigation $u_i^\gamma$ sorgt für eine Anziehung
-des Roboters zum Ziel.
+Obstacle avoidance $u_i^\beta$ is defined by the obstacle points 
+detected by a robot (\eqref{eq:22}), how strongly it is repelled by them 
+(\eqref{eq:23}) and how this repulsive force is calculated as a function of distance 
+(\eqref{eq:24}). The control force for navigation $u_i^\gamma$ 
+attracts the robot to the target (\eqref{eq:25}).
 
 
 \subsection*{The problem statement}
-Viele bestehende Navigationsansätze für Multi-Roboter-Systeme basieren auf künstlichen 
-Potenzialfeldern, bei denen Roboter von Zielpunkten angezogen und von Hindernissen 
-abgestoßen werden. Ein zentrales Problem dieser Methoden sind jedoch lokale Minima, in 
-denen sich Anziehungs- und Abstoßungskräfte ausgleichen und Roboter feststecken. 
-Verfahren für einzelne Roboter, wie kamera- oder eliminationsbasierte Ansätze stoßen bei 
-schwierigen Umweltbedingungen oder bei Hinderniskonfiguationen an ihre Grenzen.
-Weiterhin ist die Herausforderung für Multi-Roboter-Systeme, kollisionsfrei und 
-effizient in unbekannten und komplexen Umgebungen zu navigieren, trotz begrenzter 
-Sensor- und Kommunikationsreichweiten. 
-Aus diesem Grund, befasst sich diese Studie mit Kommunikation und Bewegungsplanung mehrerer Roboter,
-wobei Rausch-Effekte, Zeitverzögerung oder Paketverlust nicht berücksichtigt werden.
+Many existing navigation approaches for multi-robot systems are based on artificial 
+potential fields, in which robots are attracted to target points and repelled by obstacles 
+. However, a central problem with these methods is local minima, in which 
+attractive and repulsive forces balance each other out and robots get stuck. 
+Methods for individual robots, such as camera- or elimination-based approaches, reach their limits in 
+difficult environmental conditions or obstacle configurations.
+Furthermore, the challenge for multi-robot systems is to navigate collision-free and 
+efficiently in unknown and complex environments, despite limited 
+sensor and communication ranges. 
+For this reason, this study deals with communication and motion planning 
+for multiple robots,
+whereby noise effects, time delays, or packet loss are not taken into account.
 
 
 \section{Single robot navigation}
 \label{sec:Single robot navigation}
-Bevor ein Roboter im Schwarm handeln kann, muss er allein zurechtkommen. Dazu 
-werden in diesem Abschnitt drei Methoden vorgestellt:
+Before a robot can act in a swarm, it must be able to cope on its own. To this end, 
+three methods are presented in this section:
 \begin{itemize}
-    \item Tangential Navigation, inspiriert von \cite{Brandao.2013},
-    \item Corner avoidance und
-    \item Motion planning at obstacle extemities.
+    \item Tangential navigation, inspired by \cite{Brandao.2013},
+    \item Corner avoidance, and
+    \item Motion planning at obstacle extremities.
 \end{itemize}
 
-Grundsätzlich möchte sich ein Roboter zu einem festgelegtem Ziel bewegen und achtet 
-währenddessen in einem bestimmten Sensorradius \(r_{\mathrm{tan}}\) auf Hindernisse. Nimmt 
-er dabei ein Hindernis (repräsentiert durch den Punkt \( \hat{p}_{i,k} \)) wahr, weicht 
-er parallel zur Hinderniskante, also tangential aus. Dies geschieht unter Berücksichtigung der bewegungsrichtungsabhängigen Winkel \( \alpha_i \) und 
-\( \beta_i \) und sich daraus ergebenen Rotationswinkel \( \gamma_i \). Diese Winkel bestimmen die Ausweichrichtung 
-((15) bis (17)) und ein virtuelles Ziel (18). Über eine angepasste Steuerkraft 
-((19) ähnlich zu (14)) wird der Roboter dabei zum virtuellen Ziel $p_i^v$ beschleunigt.
+Basically, a robot wants to move to a specified destination while watching out for obstacles within a certain sensor radius \(r_{\mathrm{tan}}\). If it detects an obstacle (represented by the point \( \hat{p}_{i,k} \)), it avoids it by moving parallel to the edge of the obstacle, i.e., tangentially.
+This is done taking into account the angles \( \alpha_i \) and \( \beta_i \) depending on the direction of movement and the resulting rotation angles \( \gamma_i \).
+The robot's position \( \hat{p}_{i,k} \) is determined by the coordinates of the sensor \( \hat{p}_{i,k} \) and the distance \( r_{\mathrm{tan}} \) from the obstacle \( \hat{p}_{i,k} \).
+The robot's This is done taking into account 
+the movement direction-dependent angles \( \alpha_i \) and 
+\( \beta_i \) and the resulting rotation angle \( \gamma_i \). 
+These angles determine the evasion direction 
+(\eqref{eq:26} to \eqref{eq:28}) and a virtual target 
+(\eqref{eq:29}). Using an adjusted control force 
+(\eqref{eq:30} similar to \eqref{eq:25}) ,
+ the robot is accelerated toward the virtual target $p_i^v$.
 
 \begin{figure}[h]
     \centering
@@ -133,12 +141,13 @@ er parallel zur Hinderniskante, also tangential aus. Dies geschieht unter Berüc
     \label{fig:Strategy for tangential navigation}
 \end{figure}
 
-Nimmt der Roboter zwei Hindernisse (repräsentiert durch zwei Punkte \( \hat{p}_{i,n} \) und \( \hat{p}_{i,n90} \)) 
-wahr, die eine Ecke bilden, wendet er das \textit{Corner Avoidance} Manöver an. 
-Dabei wird der Rotationswinkel \( \gamma_i \) um einen zusätzlichen Winkel \( \varepsilon_i \) 
-ergänzt, der sich aus den Tangentenrichtungen $n$ und $n_{90}$ zu beiden Hindernispunkten 
-relativ zum Roboter berechnet ((20) bis (21)). Anschließend wird wieder
-ein virtuelles Ziel $p_i^v$ bestimmt, das den Roboter aus der Ecke herausführt (22).
+If the robot detects two obstacles (represented by two points \( \hat{p}_{i,n} \) and \( \hat{p}_{i,n90} \)) 
+that form a corner, it applies the \textit{Corner Avoidance} maneuver. 
+In this maneuver, the rotation angle \( \gamma_i \) is supplemented by an additional angle \( \varepsilon_i \) ,
+ which is calculated from the tangent directions $n$ and $n_{90}$ to both obstacle points 
+relative to the robot 
+(\eqref{eq:31} to \eqref{eq:32}). Then,
+a virtual target $p_i^v$ is determined again, which guides the robot out of the corner (\eqref{eq:33}).
 
 \begin{figure}[h]
     \centering
@@ -147,13 +156,15 @@ ein virtuelles Ziel $p_i^v$ bestimmt, das den Roboter aus der Ecke herausführt 
     \label{fig:Strategy for corner avoidance}
 \end{figure}
 
-Wenn der Roboter das Ende eines Hindernisses erreicht hat, führt er eine 
-kreisförmige Bewegung um das Ende herum aus. Dazu merkt er sich den letzten 
-Hindernispunkt \( \hat{p}_{i,e} \), der in seinem Sensorradius registriert wurde. Anhand  
-Gleichung (23) und dem Winkel \( \beta_{i} \), welcher sich durch die tangentiale Navigation 
-ergab, berechnet der Roboter in gleichen Abständen virtuelle Ziele (berechnet 
-durch Gleichung (24) und repräsentiert durch die Punkte \( p_i^{v1} \), \( p_i^{v2} \) und \( p_d \)) und rotiert um einen 
-festen Winkel \( \delta \), bis der Winkel zwischen Bewegungsvektor und virtuelles Ziel kleiner oder gleich \( \delta \) ist (25).
+When the robot reaches the end of an obstacle, it performs a 
+circular movement around the end. To do this, it remembers the last 
+obstacle point \( \hat{p}_{i,e} \) that was registered within its sensor radius. Using  
+equation (\eqref{eq:34}) and the angle \( \beta_{i} \), which was obtained by tangential navigation ,
+ the robot calculates virtual targets at equal intervals (calculated 
+by equation (\eqref{eq:35}) and represented by the points \( p_i^{v1} \), 
+\( p_i^{v2} \) and \( p_d \)) at equal intervals and rotates by a 
+fixed angle \( \delta \) until the angle between the motion vector and the virtual 
+target is less than or equal to \( \delta \) (\eqref{eq:36}).
 
 \begin{figure}[h]
     \centering
@@ -164,16 +175,17 @@ festen Winkel \( \delta \), bis der Winkel zwischen Bewegungsvektor und virtuell
 
 
 \section{The proposed navigation approach for a multi-robot system}
-Der nun vorgestellte Ansatz erweitert den Navigationsalgorithmus für einzelne Roboter 
-um eine Kommunikationsschnittstelle für die kollektive Bewegungsplanung mehrerer 
-Roboter. Der Zusammenhalt der Gruppe könnte gefährdet werden, wenn jeder Roboter 
-sein eigenes virtuelles Ziel verfolgt. Daher werden Informationen über virtuelle 
-Ziele und kritische Punkte (wie in Fig.~\ref{fig:The critical points of obstacles} dargestellt) untereinander ausgetauscht. 
-Diese Informationen werden nach Relevanz, Aktualität und dem Prinzip "Erkennung vor 
-Kommunikation" priorisiert (erkannte Hindernisse haben dabei Vorrang vor übermittelten 
-Informationen aus dem Kommunikationsnetzwerk).
-Das Kommunikationsnetzwerk besteht aus Informationspaketen, die sich in drei Typen 
-gliedern: Orientierung, Endpunkte und Ecken.
+The approach presented here extends the navigation algorithm for individual robots 
+with a communication interface for the collective motion planning of multiple 
+robots. The cohesion of the group could be jeopardized if each robot 
+pursues its own virtual goal. Therefore, information about virtual 
+targets and critical points 
+(as shown in Fig.~\ref{fig:The critical points of obstacles}) is exchanged between them. 
+This information is prioritized according to relevance, timeliness, and the principle of "detection before 
+communication" (detected obstacles take precedence over transmitted 
+information from the communication network).
+The communication network consists of information packets, which are divided into three types
+: orientation, endpoints, and corners.
 
 \begin{figure}[h]
     \centering
@@ -182,78 +194,81 @@ gliedern: Orientierung, Endpunkte und Ecken.
     \label{fig:The critical points of obstacles}
 \end{figure}
 
-\textbf{Orientierung (Fig.~\ref{fig:Information about orientation}):} Enthält den Winkel \( \theta_i \) zum aktuellen Ziel, den erkannten 
-Punkt \( \hat{p}_{i,k} \) auf dem Hindernis, den aktuellen Status des Roboters (alle Status in Table 1 erklärt) sowie den 
-Zeitpunkt der Hinderniserkennung.
+\textbf{Orientation (Fig.~\ref{fig:Information about orientation}):} 
+Contains the angle \( \theta_i \) to the current target, the detected 
+point \( \hat{p}_{i,k} \) on the obstacle, the current status of the 
+robot (all statuses explained in Table 1), and the time of obstacle detection.
 
-\textbf{Endpunkte (Fig.~\ref{fig:Endpoint and corner Information} (a)):} Besteht aus dem zuletzt erkannten Punkt \( \hat{p}_{i,e} \), dem Winkel \( \omega_{i,e} \) 
-zwischen dem Normalenvektor vom Roboter zum Hindernis und der x-Achse des inertialen 
-Koordinatensystems\footnote{unbeschleunigtes und dem Trägheitsgesetz unterliegendes Koordinatensystem} sowie 
-dem Zielwinkel \( \theta_{i,e} \) im Moment der Endpunkterkennung.
+\textbf{Endpoints (Fig.~\ref{fig:Endpoint and corner Information} (a)):} 
+Consists of the last detected point \( \hat{p}_{i,e} \), the angle \( \omega_{i,e} \) 
+between the normal vector from the robot to the obstacle and the x-axis of the inertial 
+coordinate system\footnote{unaccelerated and subject to the law of inertia 
+coordinate system} and the target angle \( \theta_{i,e} \) at the moment of endpoint detection.
 
-\textbf{Ecken (Fig.~\ref{fig:Endpoint and corner Information} (b)):} Umfasst den Zielwinkel beim Eintritt (\( \theta_{i,\mathrm{ent}} \)) und Austritt 
-(\( \theta_{i,\mathrm{ex}} \)) aus der Ecke sowie den Eckpunkt \( \hat{p}_{i,c} \), der als Schnittpunkt aus den
-erkannten Hindernislinien berechnet wird.
+\textbf{Corners (Fig.~\ref{fig:Endpoint and corner Information} (b)):} 
+Includes the target angle at entry (\( \theta_{i,\mathrm{ent}} \)) and exit 
+(\( \theta_{i,\mathrm{ex}} \)) from the corner, as well as the corner point \( \hat{p}_{i,c} \), 
+which is calculated as the intersection of the detected obstacle lines.
 
-Bevor ein Roboter eine Aktion anhand der gegebenen Orientierungsinformationen aus 
-dem Kommunikationsnetzwerk ausführt, berechnet dessen Relevanz über die Funktion \( \mathrm{rel} \), 
-welche im Intervall \( ]-\infty, 10] \) liegt. Dabei steht \( \mathrm{rel}=10 \) für eine 
-sehr relevante und \( \mathrm{rel} \leq 0 \) für eine zu ignorierende Information. 
-Unterschieden wird dabei wie folgt:
+Before a robot performs an action based on the orientation information provided by 
+the communication network, its relevance is calculated using the equation \( \mathrm{rel} \), 
+which lies in the interval \( ]-\infty, 10] \). Here, \( \mathrm{rel}=10 \) stands for 
+highly relevant information and \( \mathrm{rel} \leq 0 \) for information to be ignored. 
+The distinction is made as follows:
 \begin{itemize}
-    \item \textbf{Alter der Information:}
-    Die Gleichung
+    \item \textbf{Age of information:}
+    The equation
     \begin{equation}
         \mathrm{rel}_t = 10 - \frac{10 \cdot (t_k - \hat{t}^c)}{d_t}
         \label{eq:5}
     \end{equation}
-    bestimmt: je älter die Information, desto unwichtiger ist sie, mit 
-    der aktuellen Zeit \( t_k \) und der Registrierungszeit \( \hat{t}^c \) der Information von einem 
-    anderen Roboter und \( d_t \in \mathbb{R} \) eine Konstante, die \( \mathrm{rel_t} \) ab einer
-    bestimmten Zeit negativ werden lässt.
+    determines: the older the information, the less important it is, with 
+    the current time \( t_k \) and the registration time \( \hat{t}^c \) of the information from another 
+    robot and \( d_t \in \mathbb{R} \) a constant that makes \( \mathrm{rel_t} \) negative after a
+    certain time.
     
-    \item \textbf{Distanz vom Hindernis:}
-    Sollte das Hindernis in Bewegungsrichtung liegen, 
-    so ermittelt sich die Relevanz der Distanz mit 
+    \item \textbf{Distance from the obstacle:}
+    If the obstacle is in the direction of movement, 
+    the relevance of the distance is determined by 
     \begin{equation}
         \mathrm{rel}_{\mathrm{dist}} = 10 - \frac{10 \cdot \| \hat{p}^c - p_i \|}{d_x}
         \label{eq:6}
     \end{equation}
-    mit \( d_x \in \mathbb{R} \) die maximale Distanz und \( \| \hat{p}^c - p_i \| \) der Abstand des Roboters ($p_i$) 
-    zum Hindernis ($\hat{p}^c$). Liegt es dahinter, dann mit
+    where \( d_x \in \mathbb{R} \) is the maximum distance and \( \| \hat{p}^c - p_i \| \) is the distance between the robot ($p_i$) 
+    and the obstacle ($\hat{p}^c$). If it is behind, then with
     \begin{equation}
         \mathrm{rel}_{\mathrm{dist}} = - \frac{10 \cdot \| \hat{p}^c - p_i \|}{d_x}
         \label{eq:7}
     \end{equation}
-    und sollten keine Orientierungsinformationen gegeben sein, so 
-    ist \( \mathrm{rel}_{\mathrm{dist}} = 0 \).
+    and if no orientation information is given, then 
+    \( \mathrm{rel}_{\mathrm{dist}} = 0 \).
     
-    \item \textbf{Relevanz der Orientierung basierend auf dem vorherigen Zeitschritt:}
-    Jeder Roboter erwartet für jeden Zeitschritt nur kleine Änderungen in der tangentialen 
-    Navigation. Die Gleichung 
+    \item \textbf{Relevance of orientation based on the previous time step:}
+    Each robot expects only small changes in tangential 
+    navigation for each time step. The equation 
     \begin{equation}
         \mathrm{rel}_{\mathrm{exp}} = 10 - \frac{10 \cdot | \theta_i(t_k) - \theta^c |}{d_\theta}
         \label{eq:8}
     \end{equation}
-    beschreibt die Relevanz der erwarteten Orientierung, wobei 
-    \( |\theta_i(t_k) - \theta^c| \) der Vergleich mit der aktuellen Zielorientierung ($\theta_i(t_k)$) und 
-    der neuen Orientierung ($\theta^c$) ist und \( d_\theta \) die maximal erlaubte Winkeldifferenz, sodass
+    describes the relevance of the expected orientation, where 
+    \( |\theta_i(t_k) - \theta^c| \) is the comparison with the current target orientation ($\theta_i(t_k)$) and 
+    the new orientation ($\theta^c$) and \( d_\theta \) is the maximum allowed angle difference, so that
     \( \mathrm{rel}_{\mathrm{exp}} > 0 \).
     
-    \item \textbf{Auswertung des Senders:}
-    Empfangenen Informationen sind relevanter, wenn der Sender der Besitzer dieser Informationen ist.
+    \item \textbf{Evaluation of the sender:}
+    Received information is more relevant if the sender is the owner of this information.
     \begin{equation}
         \mathrm{rel}_o =
         \begin{cases}
-        10, & \text{wenn direkt gesendet}\\
-        0, & \text{wenn nur weitergeleitet}
+        10, & \text{if sent directly}\\
+        0, & \text{if only forwarded}
         \end{cases}
         \label{eq:9}
     \end{equation}
     
-    \item \textbf{Auswertung anhand des Status:}
-    Aktionen die den Roboter neu ausrichten, werden mit höchster Relevanz bewertet. Alle \textit{status} sind in Tabelle 1
-    nachsehbar.
+    \item \textbf{Evaluation based on status:}
+    Actions that realign the robot are rated as having the highest relevance. All \textit{status} can be found in Table 1
+    .
     \begin{equation}
         \mathrm{rel}_{\mathrm{type}} =
         \begin{cases}
@@ -265,29 +280,29 @@ Unterschieden wird dabei wie folgt:
     \end{equation}
 \end{itemize}
 
-Die endgültige Relevanz ergibt sich aus der Gleichung
+The final relevance is calculated using the equation
 \begin{equation}
     \scalebox{1.15}{$\overline{\mathrm{rel}}_n = \frac{c_{\mathrm{type}} \cdot \mathrm{rel}_{\mathrm{type}} + c_o \cdot \mathrm{rel}_o + c_{\mathrm{exp}} \cdot \mathrm{rel}_{\mathrm{exp}} + c_{\mathrm{dist}} \cdot \mathrm{rel}_{\mathrm{dist}} + c_t \cdot \mathrm{rel}_t}{c_{\mathrm{type}} + c_o + c_{\mathrm{exp}} + c_{\mathrm{dist}} + c_t}$}
     \label{eq:11}
 \end{equation}
-wobei die maximale Relevanz durch 
+where the maximum relevance is calculated by 
 \begin{equation}
     \mathrm{rel}_{\mathrm{max}} = \underset{\mathrm{rel}_n \in \mathcal{R}_i}{\mathrm{argmax}}(\mathrm{rel}_n)
     \label{eq:12}
 \end{equation}
-berechnet wird, mit $n \in \mathcal{S}_i$, die Menge aller aus dem Netzwerk erhaltene Informationspakete und 
-$\mathcal{R}_i$ die Menge aller aus den Informationspaketen entnommenen Relevanzwerte für Roboter $i$.
+with $n \in \mathcal{S}_i$, the set of all information packets received from the network, and 
+$\mathcal{R}_i$ the set of all relevance values extracted from the information packets for robot $i$.
 
-Ein Informationspaket ist für einen Roboter schließlich relevant, wenn die Bedingung
+An information packet is ultimately relevant for a robot if the condition
 \begin{equation}
     \mathrm{rel}_n \geq 0.95 \cdot \mathrm{rel}_{\mathrm{max}}
     \label{eq:13}
 \end{equation}
-erfüllt ist. Er passt daraufhin seine 
-Bewegungsrichtung für den nächsten Zeitschritt an. Sollten mehrere Informationspakete 
-diese Bedingung erfüllen, wird der Mittelwert daraus bestimmt.
+is satisfied. It then adjusts its 
+direction of movement for the next time step. If several information packets 
+satisfy this condition, the mean value is determined from them.
 
-Zu übermittelten Ecken oder Endpunkten, prüft der Roboter seine Distanz $d_s$ mit
+For transmitted corners or endpoints, the robot checks its distance $d_s$ with
 \begin{equation}
     \begin{split}
     d_s \leq \| p_i - \hat{p}_c^c \| \leq R_{\mathrm{rel}},\\
@@ -295,8 +310,8 @@ Zu übermittelten Ecken oder Endpunkten, prüft der Roboter seine Distanz $d_s$ 
     \end{split}
     \label{eq:14}
 \end{equation}
-und sieht diese Punkte dann als seine eigenen Hindernispunkte an, sollten 
-sie innerhalb der maximalen Distanz \( R_{\mathrm{rel}} \in \mathbb{R} \) liegen.
+and then considers these points as its own obstacle points if 
+they lie within the maximum distance \( R_{\mathrm{rel}} \in \mathbb{R} \).
 
 \begin{figure}[h]
     \centering
@@ -312,24 +327,43 @@ sie innerhalb der maximalen Distanz \( R_{\mathrm{rel}} \in \mathbb{R} \) liegen
     \label{fig:Endpoint and corner Information}
 \end{figure}
 
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\hline
+\textbf{status$_i$} & \textbf{Definition} \\
+\hline
+0 & Motion toward the desired goal position \\
+1 & Obstacle detection and tangential navigation \\
+2 & Handling the endpoint of an obstacle \\
+3 & Corner avoidance maneuver \\
+4 & Orientation phase \\
+5 & Tangential navigation based on received information \\
+6 & Waiting mode \\
+\hline
+\end{tabular}
+\caption{Definition of action statuses.}
+\label{tab:status}
+\end{table}
+
 
 \section{Collective navigation using shared information}
-In diesem Abschnitt wird erklärt, wie die Verfahren eines einzelnen Roboters auf ein 
-Multi-Roboter-System erweitert werden können. Dazu sind 7 Status definiert, in dem 
-sich ein Roboter befinden kann, wobei sich jeder zum Start im Status 0 befindet 
-(Erklärungen und Abhängigkeiten in Appendix A).
+This section explains how the procedures of a single robot can be extended to a 
+multi-robot system. For this purpose, seven \textbf{statuses} are defined in which 
+a robot can be found, with each robot starting in \textbf{status 0}.
 
 \subsection*{Collective tangential navigation}
-Die kollektive tangentiale Navigation umfasst die Status 1, 4 und 5. Erkennt ein 
-Roboter ein Hindernis innerhalb seiner Wahrnehmungsreichweite \( r_{\mathrm{tan}} \), so leitet er, 
-wie beim Einzelroboter, die tangentiale Navigation ein. Diese Aktion wird als 
-Status 1 bezeichnet. Die dabei ermittelten Informationen werden an benachbarte 
-Roboter weitergeleitet (Algorithmus 2).
-Da die Steuergröße \( u_i^\alpha \) gemäß Gleichung (8) dazu führen kann, dass sich Roboter 
-durch Abstoßung senkrecht zum Hindernis voneinander entfernen und so unbeabsichtigt 
-ein Wechsel von \textbf{Status 0} auf \textbf{1} ausgelöst werden könnte, wurde eine 
-Ignoranz-Bedingung~(\ref{eq:15}) 
-entwickelt, damit Roboter Hindernisse ignorieren können.
+Collective tangential navigation comprises 
+\textbf{status 1}, \textbf{4} and \textbf{5}. If a 
+robot detects an obstacle within its perception range \( r_{\mathrm{tan}} \), it initiates 
+tangential navigation, as with a single robot. This action is referred to as 
+\textbf{status 1}. The information obtained in this process is forwarded to neighboring 
+robots.
+Since the control variable \( u_i^\alpha \) according to equation (\eqref{eq:19}) can cause robots 
+to move away from each other by repelling each other perpendicular to the obstacle, which could unintentionally 
+trigger a change from \textbf{status 0} to \textbf{1}, an 
+ignorance condition~(\ref{eq:15}) 
+was developed so that robots can ignore obstacles.
 \begin{equation}
     \begin{split}
     (|\upsilon_i| > 90^\circ \wedge |\beta_i| > 91^\circ) \vee \\
@@ -338,43 +372,45 @@ entwickelt, damit Roboter Hindernisse ignorieren können.
     \label{eq:15}
 \end{equation}
 
-Wird ein Roboter durch neue Informationen aus dem Kommunikationsnetzwerk in eine 
-ungünstige Ausrichtung gebracht und der Unterschied zwischen seiner aktuellen Bewegungs- 
-und Zielausrichtung größer als 45° ist, so wechselt er in 
-den Status 4 (Algorithmus 5), um seine Ausrichtung zu korrigieren.
-Berechnet ein Roboter aufgrund empfangener Informationen ein virtuelles Ziel mittels 
-Gleichung 38, befindet er sich im Status 5 (Algorithmus 6).
-Um zu verhindern, dass Roboter Hindernisendpunkte zu spät erkennen, wenn diese nur 
-von anderen benachbarten Robotern erfasst wurden, wird eine Distanzabschätzung mit 
-einer Fallunterscheidung (Bedingung 39) vorgenommen. Damit kann der Roboter anhand 
-der Entfernung zum Hindernis oder zu einer projizierten Position seine 
-Zielausrichtung rechtzeitig anpassen und so Verzögerungen im Bewegungsablauf vermeiden.
+If new information from the communication network causes a robot to be 
+misaligned and the difference between its current movement 
+and target orientation is greater than 45°, it switches to 
+status 4 to correct its orientation.
+If a robot calculates a virtual target using equation (\eqref{eq:37}) based on the information 
+it has received, it is in \textbf{status 5}.
+To prevent robots from detecting obstacle endpoints too late if they have only been detected 
+by other neighboring robots, a distance estimation with case differentiation 
+(\eqref{eq:40}) is performed.
+To prevent robots from detecting obstacle endpoints too late when these have only 
+been detected by other neighboring robots, a distance estimation is performed with 
+a case distinction (\eqref{eq:30}). This allows the robot to adjust its 
+adjust its target orientation in good time and thus avoid delays in the movement sequence.
 
 \subsection*{Collective corner avoidance}
-Nähert sich ein Roboter einer Ecke, kann er sie, wie in 
-Abschnitt~\ref{sec:Single robot navigation} beschrieben, 
-umfahren und dabei zusätzlich Informationen aus dem Kommunikationsnetzwerk nutzen. 
-Diese Aktion wird als Status 3 bezeichnet.
+If a robot approaches a corner, it can 
+navigate around it as described in Section~\ref{sec:Single robot navigation}, 
+while also using information from the communication network. 
+This action is referred to as \textbf{status 3}.
 
-Damit dabei keine möglichen Durchgänge 
-(z. B. zwischen zwei Hindernissen) übersehen werden, prüft der Roboter zuvor die 
-Bedingung 40. Nur wenn diese erfüllt ist, wird die Ecke als solche erkannt.
-Anschließend definiert der Roboter ein neues virtuelles Ziel und wechselt in Status 4, 
-um sich neu auszurichten. Gleichzeitig sendet er Informationen über die erkannte Ecke 
-an die benachbarten Roboter.
-Wird die Bedingung 40 jedoch nicht erfüllt, verbleibt der Roboter zunächst im 
-Wartezustand (Status 6). In diesem Zustand überwacht er das Kommunikationsnetzwerk 
-seiner Nachbarn. Wird dabei eine Information mit Status 3 oder 4 als relevant 
-eingestuft, übernimmt der Roboter sie und verlässt den Wartezustand. Gibt es 
-stattdessen relevante Informationen mit Status 1 oder 2, passt er sich entsprechend 
-an und folgt entweder der tangentialen Navigation oder dem Manöver an einem Hindernisendpunkt.
+To ensure that no possible passages 
+(e.g., between two obstacles) are overlooked, the robot first checks the 
+condition (\eqref{eq:39}). Only if this condition is met is the corner recognized as such.
+The robot then defines a new virtual target and switches to \textbf{status 4} 
+to realign itself. At the same time, it sends information about the recognized corner 
+to the neighboring robots.
+However, if the condition (\eqref{eq:39}) is not met, the robot initially remains in 
+waiting state (\textbf{status 6}). In this state, it monitors the communication network 
+of its neighbors. If information with \textbf{status 3} or \textbf{4} is classified as relevant ,
+ the robot adopts it and leaves the waiting state. If, 
+instead, there is relevant information with \textbf{status 1} or \textbf{2}, it adapts accordingly 
+and either follows the tangential navigation or the maneuver at an obstacle endpoint.
 
 \subsection*{Collective motion at obstacle extremities}
-Erkennt ein Roboter den Endpunkt eines Hindernisses, folgt er virtuellen Zielpositionen 
-auf einem kreisförmigen Pfad (Status 2), wie in 
-Abschnitt~\ref{sec:Single robot navigation} beschrieben. Jeder 
-Roboter legt individuelle Ziele auf diesem Pfad fest und teilt Informationen zum 
-Endpunkt in seinem Netzwerk (Fig.~\ref{fig:Collective maneuver at an obstacle endpoint}).
+If a robot detects the endpoint of an obstacle, it follows virtual target positions 
+on a circular path (\textbf{status 2}), as described in 
+Section~\ref{sec:Single robot navigation}. Each 
+robot sets individual targets on this path and shares information about the 
+endpoint in its network (Fig.~\ref{fig:Collective maneuver at an obstacle endpoint}).
 
 \begin{figure}[h]
     \centering
@@ -383,139 +419,139 @@ Endpunkt in seinem Netzwerk (Fig.~\ref{fig:Collective maneuver at an obstacle en
     \label{fig:Collective maneuver at an obstacle endpoint}
 \end{figure}
 
-Nach Erhalt der Endpunktdaten prüft ein Roboter seine 
-Position durch orthogonale Projektion auf eine virtuelle Startlinie, 
-bevor er die Kreisbewegung beginnt. Sollte der Roboter diese Startlinie noch nicht 
-erreicht haben (Bedingung 42), setzt er weitere tangentiale Ziele und passt seine 
-Geschwindigkeit an die Mindestgeschwindigkeit für die Kreisbewegung an 
-(Gleichung 43 und 44). Erreicht er die Startlinie, beginnt die Kreisbewegung 
-entsprechend des in 
-Abschnitt~\ref{sec:Single robot navigation} vorgestellten Schemas.
+After receiving the endpoint data, a robot checks its 
+position by orthogonal projection onto a virtual start line 
+before beginning the circular motion. If the robot has not yet reached this start line 
+(\eqref{eq:40}), it sets further tangential targets and adjusts its 
+speed to the minimum speed for circular motion 
+(\eqref{eq:41} to \eqref{eq:42}). Once it reaches the start line, circular motion begins 
+according to the scheme presented in 
+Section~\ref{sec:Single robot navigation}.
 
-Während der Bewegung stellt eine Komponente aus Gleichung 8 sicher, dass der Roboter 
-sein Ziel auf dem kreisförmigen Pfad erreicht. Überschreitet ein Roboter sein 
-virtuelles Ziel, wird eine neue Zielposition berechnet.
+During the movement, a component from equation (\eqref{eq:19}) ensures that the robot 
+reaches its target on the circular path. If a robot exceeds its 
+virtual target, a new target position is calculated.
 
-Die Roboter bewegen sich auf individuellen Kreisbahnen mit 
-unterschiedlichen Radien, wodurch innere Kreise kürzere Wege bedeuten. 
-Der Geschwindigkeitskonsens basiert bei der Kreisbewegung auf gleichen 
-Winkelgeschwindigkeiten. Dafür wird eine minimale Winkelgeschwindigkeit (45) 
-festgelegt und die Steuergröße aus Gleichung 8 für eine angepasste Steuergröße 
-aus Gleichung 46 und 47 ersetzt. Dadurch können die Roboter gleichförmig das 
-Hindernisende umkreisen.
+The robots move on individual circular paths with 
+different radii, which means that inner circles result in shorter paths. 
+The speed consensus for circular motion is based on equal 
+angular velocities. For this purpose, a minimum angular velocity (\eqref{eq:43}) 
+is specified and the control variable from equation (\eqref{eq:19}) is replaced by an 
+adapted control variable 
+from equations (\eqref{eq:44}) and (\eqref{eq:45}). 
+This allows the robots to circle the end of the obstacle uniformly.
 
 \subsection*{Conditional Braking}
+When several robots in a group perform a circular movement around an obstacle,
+ differences in the timing of leaving the circular path can cause speed differences 
+ that lead to the group breaking apart.
+To prevent this, robots that have already passed the obstacle are slowed down.
+This deceleration remains active until the last robot in the group has left the circular path.
+To determine this last robot, a new coordinate system is defined whose origin is at the 
+end point of the circular path. This deceleration remains active until the last robot in the 
+group has left the circular path.
 
-Wenn mehrere Roboter einer Gruppe eine kreisförmige Bewegung um ein Hindernis 
-ausführen, können durch unterschiedliche Zeitpunkte beim Verlassen der Kreisbahn 
-Geschwindigkeitsunterschiede entstehen, die zum Auseinanderreißen der Gruppe führen. 
-Um dies zu verhindern, werden Roboter, die das Hindernis bereits passiert haben, 
-abgebremst. Dieses Abbremsen bleibt solange aktiv, bis der letzte Roboter der 
-Gruppe die Kreisbahn verlassen hat.
+To determine this last robot, a new coordinate system is defined, 
+whose origin lies at the end point of the obstacle. In this system, the 
+position of each robot is projected onto the x-axis. Using these projected 
+positions and equation (\eqref{eq:46}), the robots observe their neighborhood and 
+identify the robot that is furthest behind.
 
-Zur Bestimmung dieses letzten Roboters wird ein neues Koordinatensystem definiert, 
-dessen Ursprung im Endpunkt des Hindernisses liegt. In diesem System wird die 
-Position jedes Roboters auf die x-Achse projiziert. Anhand dieser projizierten 
-Positionen und über Gleichung 53 betrachten die Roboter ihre Nachbarschaft und 
-identifizieren den Roboter, der am weitesten hinten liegt.
-
-Über eine Gossip-ähnliche 
-Kommunikation\footnote{lokaler, dezentraler und iterativer Informationsaustausch}
-wird die gesamte Gruppe über diesen Kandidaten informiert, 
-bis alle Roboter den globalen hintersten Roboter ermittelt haben. Sobald 
-dieser Roboter seine Kreisbewegung beendet hat, sendet er ein Reset-Signal, 
-um das Bremsen der restlichen Roboter aufzuheben und die Gruppenbewegung 
-wieder zu synchronisieren.
+Via gossip-like 
+communication\footnote{local, decentralized, and iterative information exchange}
+, the entire group is informed about this candidate until 
+all robots have determined the global rear robot. Once 
+this robot has completed its circular movement, it sends a reset signal to 
+release the brakes of the remaining robots and resynchronize the group movement.
 
 \subsection*{Watchdog timer}
-Fällt die Geschwindigkeit eines Roboters unter einen definierten Schwellenwert, 
-aktiviert er einen selbstüberwachenden Mechanismus, den \textit{Watchdog Timer}. 
-Dabei speichert der Roboter seine aktuelle Position und den aktuellen Zeitpunkt. 
-Der Timer wird wieder deaktiviert, sobald sich der Roboter innerhalb der 
-folgenden Zeitschritte um mehr als einen festgelegten Schwellenwert bewegt 
-(Roboter nimmt an einen möglichen Deadlock\footnote{ausweglose Situation} verlassen zu haben). 
-Bewegt sich der Roboter jedoch über einen Zeitraum von 15 Sekunden kaum 
-und wurde der Timer nicht deaktiviert, wechselt er automatisch in Status 0 
-und bewegt sich in Richtung desired goal. Diese Maßnahme kann zwar zu einer 
-Fragmentierung der Gruppe führen, stellt jedoch sicher, dass jeder Roboter 
-das desired goal erreicht.
+If the speed of a robot falls below a defined threshold value, 
+it activates a self-monitoring mechanism called the \textit{watchdog timer}. 
+The robot stores its current position and the current time. 
+The timer is deactivated again as soon as the robot moves more than a specified threshold 
+value within the following time steps 
+(the robot assumes that it has left a possible deadlock\footnote{hopeless situation}). 
+However, if the robot hardly moves for a period of 15 seconds 
+and the timer has not been deactivated, it automatically switches to \textbf{status 0} 
+and moves toward the desired goal. Although this measure can lead to 
+fragmentation of the group, it ensures that each robot 
+reaches the desired goal.
 
 
 \section{Simulation results}
-Die Simulationsergebnisse werden anhand von zwei Szenarien dargestellt: 
-einem mit einem Zickzack-Hindernis und einem mit einem Korridor mit Hindernissen. 
-In beiden Fällen werden zwölf Roboter zufällig 
-innerhalb eines Startbereichs positioniert, jeweils ohne Anfangsgeschwindigkeit. 
-Zusätzlich wird ein desired goal (als rotes Kreuz markiert) definiert.
+The simulation results are presented using two scenarios: 
+one with a zigzag obstacle and one with a corridor with obstacles. 
+In both cases, twelve robots are randomly 
+positioned within a starting area, each without initial velocity. 
+In addition, a desired goal (marked with a red cross) is defined.
 
-Die Roboter werden in den Abbildungen als schwarze Dreiecke dargestellt. 
-Ihre Bewegung wird durch eine bunte Linie hinter den Dreiecken visualisiert, 
-die Bewegungsrichtung entspricht der Ausrichtung der Dreiecksspitze. Die schwarzen 
-Linien zwischen den Robotern zeigen das aktive Kommunikationsnetzwerk an. 
-Die Abbildungen geben Momentaufnahmen zu bestimmten Zeitpunkten bzw. 
-bei relevanten Ereignissen während der Simulation wieder.
+The robots are represented as black triangles in the figures. 
+Their movement is visualized by a colored line behind the triangles, 
+with the direction of movement corresponding to the orientation of the triangle's tip. The black 
+lines between the robots indicate the active communication network. 
+The figures show snapshots at specific points in time or 
+relevant events during the simulation.
 
-Im ersten Szenario (Fig.~\ref{fig:Sequential snapshots of 12 robots collectively navigating through a zigzag obstacle}) zeigen sich folgende Abläufe:
+In the first scenario (Fig.~\ref{fig:Sequential snapshots of 12 robots collectively navigating through a zigzag obstacle}), the following sequences are shown:
 \begin{itemize}
-\item (a): Erkennung eines Hindernisses und Beginn der tangentialen Navigation
-\item (b): Erkennung eines Eckpunktes und Ausführung des \textit{corner avoidance maneuvers}
-\item (c) und (d): Erkennung eines Endpunktes und Einleitung der kreisförmigen Bewegung um das Hindernis
-\item (e): Annäherung der Roboter an das Hindernis zur Optimierung der Navigation mithilfe von Gleichung 39
-\item (f): Erreichen des gewünschten Zielpunkts
+\item (a): Detection of an obstacle and start of tangential navigation
+\item (b): Detection of a corner point and execution of the corner avoidance maneuver
+\item (c) and (d): Detection of an end point and initiation of circular movement around the obstacle
+\item (e): Approximation of the robots to the obstacle to optimize navigation using equation (\eqref{eq:46})
+\item (f): Reaching the desired destination point
 \end{itemize}
 
-Im zweiten Korridor-Szenario (Fig.~\ref{fig:Sequential snapshots of 12 robots collectively navigating through a corridor}) kommen dieselben Verfahren zum Einsatz.
+The same procedures are used in the second corridor scenario (Fig.~\ref{fig:Sequential snapshots of 12 robots collectively navigating through a corridor}).
 
 \subsection*{Guideline for parameter choice}
-Die Parameter der Relevanzfunktion (Gleichung 32) sollten in Abhängigkeit des 
-jeweiligen Szenarios gewählt werden. Ein globales Verhalten des 
-Multi-Roboter-Systems, bei dem alle Roboter nahezu gleichzeitig identische 
-Aktionen ausführen, ist dabei für kleinere Systeme mit sechs bis zwölf 
-Robotern geeignet, wenn deren Verteilung im Verhältnis zu den Hindernissen 
-gering ist. In diesem Fall sollten die Relevanz der Zeit des Informationspakets 
-(\texttt{relt}) und der Relevanz des Aktionsstatus (\texttt{reltype}) höher 
-gewichtet werden als die übrigen Werte, damit Roboter gleichartig und möglichst
-synchron auf aktuelle Ereignisse im Kommunikationsnetzwerk reagieren.
+The parameters of the relevance function (\eqref{eq:11}) should be selected depending on the 
+respective scenario. A global behavior of the 
+multi-robot system, in which all robots perform identical actions almost simultaneously ,
+ is suitable for smaller systems with six to twelve 
+robots if their distribution in relation to the obstacles 
+is low. In this case, the relevance of the time of the information packet 
+(\texttt{relt}) and the relevance of the action status (\texttt{reltype}) should be weighted higher 
+than the other values so that robots react uniformly and as synchronously as possible
+to current events in the communication network.
 
-Bei steigender Anzahl von Robotern oder einer dichteren Hinderniskonstellation 
-kann ein solches globales Verhalten jedoch problematisch sein, da einzelne 
-Roboter gleichzeitig mehrere relevante Informationspakete erhalten könnten. 
-In diesen Situationen sollten Roboter stärker auf ihre eigene Position und lokale 
-Informationen achten. Dazu werden die Relevanz des Abstands zum Hindernis 
-(\texttt{reldist}), die Relevanz der erwarteten Orientierung für die nächste Aktion 
-(\texttt{relexp}) sowie die Relevanz des Senders der Information (\texttt{relo}) 
-höher gewichtet als \texttt{relt} und \texttt{reltype}.
+However, with an increasing number of robots or a denser obstacle constellation, 
+such global behavior can be problematic, as individual 
+robots could receive several relevant information packets at the same time. 
+In these situations, robots should pay more attention to their own position and local 
+information. To this end, the relevance of the distance to the obstacle 
+(\texttt{reldist}), the relevance of the expected orientation for the next action 
+(\texttt{relexp}), and the relevance of the sender of the information (\texttt{relo}) 
+are weighted more heavily than \texttt{relt} and \texttt{reltype}.
 
-Die Effekte dieser unterschiedlichen Gewichtungen zeigen sich in den folgenden Abbildungen:
+The effects of these different weightings are shown in the following figures:
 \begin{itemize}
-\item Abbildung~\ref{fig:Sequential snapshots of 20 robots collectively navigating around two circular obstacles} 
-zeigt ein \textit{squeezing maneuver}, bei dem sich die 
-Robotergruppe zwischen zwei kreisförmigen Hindernissen hindurch bewegt.
-\item In Abbildung~\ref{fig:Sequential snapshots of 20 robots collectively navigating around a semi circular obstacle} 
-ist zu erkennen, wie ein halbkreisförmiges Hindernis 
-die Gruppe aufteilt. Die Roboter korrigieren daraufhin ihre Bewegungsrichtung, 
-indem sie ihren aktuellen Aktionsstatus überprüfen und anpassen.
-\item Abbildung~\ref{fig:Sequential snapshots of 20 robots collectively navigating around small circular obstacles} veranschaulicht, dass durch die priorisierte 
-Hindernisvermeidung eine Fragmentierung der Gruppe auftritt. 
-Dennoch erreichen letztlich alle Roboter das gewünschte Ziel.
+\item Fig.~\ref{fig:Sequential snapshots of 20 robots collectively navigating around two 
+circular obstacles} 
+shows a \textit{squeezing maneuver} in which the 
+group of robots moves between two circular obstacles.
+\item Fig.~\ref{fig:Sequential snapshots of 20 robots collectively navigating around a 
+semi circular obstacle} 
+shows how a semicircular obstacle 
+divides the group. The robots then correct their direction of movement 
+by checking and adjusting their current action status.
+\item Fig.~\ref{fig:Sequential snapshots of 20 robots collectively navigating around 
+small circular obstacles} illustrates that prioritized 
+obstacle avoidance causes fragmentation of the group. 
+Nevertheless, all robots ultimately reach the desired destination.
 \end{itemize}
 
 
 \section{Conclusion}
-In dieser Arbeit wurde ein Verfahren zur kollektiven Navigation autonomer Roboter 
-in unbekannten Umgebungen entwickelt. Der Ansatz kombiniert eine tangentiale 
-Umgehungsstrategie mit dem Austausch lokaler Umgebungsinformationen über ein 
-Kommunikationsnetz. Kollisionsfreie und koordinierte Bewegungen der Roboter 
-werden durch künstliche Potentialkräfte ermöglicht, die ein schwarmähnliches 
-Verhalten erzeugen. Durch eine gezielte Anpassung der Parameter der 
-Relevanzfunktion und Gewichtung kann eine Fragmentierung der Gruppe 
-vermieden werden. Einzelne Roboter behalten dabei die Fähigkeit, ihr Ziel 
-auch ohne Gruppenanschluss zu erreichen. Für holonomische\footnote{Position 
-kann unabhängig der Ausrichtung geändert werden} Roboter ist dabei 
-insbesondere ein ausreichend großer Sicherheitsabstand sowie eine reduzierte 
-Geschwindigkeit entscheidend. Zukünftige Arbeiten sollen sich mit der 
-Umsetzung in Echtzeit, der Optimierung der drahtlosen Kommunikation und 
-alternativen Netzwerkstrukturen für die Roboter befassen.
+In this work, a method for collective navigation of autonomous robots in unknown environments 
+was developed. The approach combines a tangential avoidance strategy with the exchange of local 
+environmental information via a communication network. Collision-free and coordinated movements 
+of the robots are enabled by artificial potential forces that generate swarm-like behavior. 
+Targeted adjustment of the relevance function parameters and weighting can prevent fragmentation 
+of the group. Individual robots retain the ability to reach their destination even without 
+group connection. For holonomic\footnote{Position can be changed independently of orientation} 
+robots, a sufficiently large safety distance and reduced speed are particularly crucial. 
+Future work will address real-time implementation, optimization of wireless communication, 
+and alternative network structures for the robots.
 
 
 \section*{Appendix}
@@ -662,7 +698,73 @@ n_{i,e}
 \label{eq:35}
 \end{equation}
 
+\begin{equation}
+| \alpha_i | \leq \delta
+\label{eq:36}
+\end{equation}
 
+\begin{equation}
+p^v_i = p_i +
+\begin{pmatrix}
+\cos(\theta^c) & -\sin(\theta^c) \\
+\sin(\theta^c) & \cos(\theta^c)
+\end{pmatrix}
+\cdot e_x \cdot s
+\label{eq:37}
+\end{equation}
+
+\begin{equation}
+\theta_i(t_{k+1}) =
+\begin{cases}
+\theta^c - 20^\circ, & \text{if } \| \tilde{p}_{i,k} - p_i \| < 1.5 \cdot r \wedge \beta_i < 0^\circ \\
+\theta^c + 20^\circ, & \text{if } \| \tilde{p}_{i,k} - p_i \| < 1.5 \cdot r \wedge \beta_i \geq 0^\circ
+\end{cases}
+\label{eq:38}
+\end{equation}
+
+\begin{equation}
+\| \tilde{p}_{i,k} - p_i \| < 3 \cdot d_s \wedge \| \tilde{p}_{i,k} - \hat{p}^c_k \| < 3 \cdot d_s
+\label{eq:39}
+\end{equation}
+
+\begin{equation}
+( p^*_i - p_i ) = -k \cdot ( p^v_i - p_i )
+\label{eq:40}
+\end{equation}
+
+\begin{equation}
+v^{\text{ref}}_i = \frac{p^v_i - p_i}{\| p^v_i - p_i \|} \cdot \frac{d_s}{r^{\text{max}}_{i,e}} \cdot v_{\text{max}}
+\label{eq:41}
+\end{equation}
+
+\begin{equation}
+u^{\gamma}_{i,e} = -c_{\gamma e} ( v_i - v^{\text{ref}}_i )
+\label{eq:42}
+\end{equation}
+
+\begin{equation}
+\omega_{\text{min}} = \frac{v_{\text{max}}}{r^{\text{max}}_{i,e}}
+\label{eq:43}
+\end{equation}
+
+\begin{equation}
+v^{\text{ref}}_i = \frac{p^v_i - p_i}{\| p^v_i - p_i \|} \cdot \omega_{\text{min}} \cdot r_{i,e}
+\label{eq:44}
+\end{equation}
+
+\begin{equation}
+u^{\gamma}_{i,e} = -c_{\gamma e} ( v_i - v^{\text{ref}}_i )
+\label{eq:45}
+\end{equation}
+
+\begin{equation}
+d(i) =
+\begin{cases}
+\| p_{i,E} - 0_E \|, & \text{wenn } (p_{i,E} - 0_E) = k \cdot e_x^E \\
+-\| p_{i,E} - 0_E \|, & \text{wenn } (p_{i,E} - 0_E) = -k \cdot e_x^E
+\end{cases}
+\label{eq:46}
+\end{equation}
 
 
 \subsection*{Figures and tables}
