@@ -92,7 +92,7 @@ and their effectiveness depending on the distance
 
 Obstacle avoidance $u_i^\beta$ is defined by the obstacle points 
 detected by a robot (\eqref{eq:22}), how strongly it is repelled by them 
-(\eqref{eq:23}) and how this repulsive force is calculated as a function of distance 
+(\eqref{eq:23}) and how this repulsive force is calculated as a equation of distance 
 (\eqref{eq:24}). The control force for navigation $u_i^\gamma$ 
 attracts the robot to the target (\eqref{eq:25}).
 
@@ -490,7 +490,7 @@ In the first scenario (Fig.~\ref{fig:Sequential snapshots of 12 robots collectiv
 The same procedures are used in the second corridor scenario (Fig.~\ref{fig:Sequential snapshots of 12 robots collectively navigating through a corridor}).
 
 \subsection*{Guideline for parameter choice}
-The parameters of the relevance function \eqref{eq:11} should be selected depending on the 
+The parameters of the relevance equation \eqref{eq:11} should be selected depending on the 
 respective scenario. A global behavior of the 
 multi-robot system, in which all robots perform identical actions almost simultaneously,
  is suitable for smaller systems with six to twelve 
@@ -532,7 +532,7 @@ In this work, a method for collective navigation of autonomous robots in unknown
 was developed. The approach combines a tangential navigation strategy with the exchange of local 
 environmental information via a communication network. Collision-free and coordinated movements 
 of the robots are enabled by virtual potential field-based forces that generate swarm-like behavior. 
-Targeted adjustment of the relevance function parameters and weighting can prevent fragmentation 
+Targeted adjustment of the relevance equation parameters and weighting can prevent fragmentation 
 of the group. Individual robots retain the ability to reach their destination even without 
 group connection. For robots whose position can be changed independently of their orientation, a sufficiently large safety distance and reduced speed are particularly crucial. 
 Future work will address real-time implementation, optimization of wireless communication, 
@@ -541,11 +541,12 @@ and alternative network structures for the robots.
 
 \section*{Appendix}
 
-\subsection*{Equations, functions and conditions}
+\subsection*{Equations and conditions}
 \begin{equation}
 \| z \|_{\sigma} = \frac{1}{\epsilon} \left( \sqrt{1 + \epsilon \| z \|^2} - 1 \right)
 \label{eq:16}
 \end{equation}
+A modified distance measure called the $\sigma$-norm is introduced to ensure differentiability at zero and improve stability at small inter-agent distances.
 
 \begin{equation}
 \rho_h(z) =
@@ -556,48 +557,57 @@ and alternative network structures for the robots.
 \end{cases}
 \label{eq:17}
 \end{equation}
+A smooth transition equation is defined to weight the influence of neighboring agents based on their relative distances.
 
 \begin{equation}
 a_{ij}(p) = \rho_h \left( \frac{\| p_j - p_i \|_{\sigma}}{r^{\alpha}} \right), \quad j \neq i
 \label{eq:18}
 \end{equation}
+The adjacency matrix element $a_{ij}$ quantifies how strongly agent $j$ influences agent $i$ based on their distance.
 
 \begin{equation}
 u^{\alpha}_i = c_{\alpha 1} \sum_{j \in N^{\alpha}_i} \phi^{\alpha} \left( \| p_j - p_i \|_{\sigma} \right) n_{ij}
 + c_{\alpha 2} \sum_{j \in N^{\alpha}_i} a_{ij}(p) (v_j - v_i)
 \label{eq:19}
 \end{equation}
+The control input for flock-like behavior consists of a gradient-based term for cohesion/separation and a consensus term for velocity alignment.
 
 \begin{equation}
 \phi^{\alpha}(z) = \rho^{\alpha}_h \left( \frac{z}{r^{\alpha}} \right) \varphi(z - d^{\alpha})
 \label{eq:20}
 \end{equation}
+This equation modulates the inter-agent force depending on the distance and neighborhood weight.
 
 \begin{equation}
 \varphi(z) = \frac{1}{2} \left( (a + b) \sigma_1(z + c) + (a - b) \right)
 \label{eq:21}
 \end{equation}
+An uneven sigmoid equation $\varphi(z)$ is used to create asymmetric attraction and repulsion behaviors between agents.
 
 \begin{equation}
 N^{\beta}_i = \left\{ \hat{p}_{i,k} \;\big|\; \| \hat{p}_{i,k} - p_i \| < r_s \right\}
 \label{eq:22}
 \end{equation}
+The set $N^{\beta}_i$ represents all detected obstacle points within the sensing range of agent $i$.
 
 \begin{equation}
 u^{\beta}_i = c_{\beta 1} \sum_{k \in N^{\beta}_i} \phi^{\beta} \left( \| \hat{p}_{i,k} - p_i \|_{\sigma} \right) \hat{n}_{i,k}
 + c_{\beta 2} \sum_{k \in N^{\beta}_i} b_{i,k}(p) (\hat{v}_{i,k} - v_i)
 \label{eq:23}
 \end{equation}
+The control input $u^{\beta}_i$ generates repulsive forces to avoid obstacles based on their distance and motion relative to the agent.
 
 \begin{equation}
 \phi^{\beta}(z) = \rho^{\beta}_h \left( \frac{z}{d^{\beta}} \right) \left( \sigma_1(z - d^{\beta}) - 1 \right)
 \label{eq:24}
 \end{equation}
+This equation defines a repulsive force magnitude depending on the distance to the obstacle.
 
 \begin{equation}
 u^{\gamma}_i = -c_{\gamma 1} \, \sigma_1(p_i - p_d) - c_{\gamma 2} \, v_i
 \label{eq:25}
 \end{equation}
+The navigation input $u^{\gamma}_i$ guides the agent toward the desired goal position while damping its velocity.
 
 \begin{equation}
 \gamma_i =
@@ -607,6 +617,7 @@ u^{\gamma}_i = -c_{\gamma 1} \, \sigma_1(p_i - p_d) - c_{\gamma 2} \, v_i
 \end{cases}
 \label{eq:26}
 \end{equation}
+The rotation angle $\gamma_i$ is computed based on the relative position of the obstacle and the desired goal, depending on the obstacle’s side.
 
 \begin{equation}
 c_r =
@@ -616,11 +627,13 @@ c_r =
 \end{cases}
 \label{eq:27}
 \end{equation}
+The constant $c_r$ determines the predefined direction of rotation: clockwise or counter-clockwise.
 
 \begin{equation}
 \gamma_i = \beta_i - \alpha_i + c_r \cdot 90^\circ
 \label{eq:28}
 \end{equation}
+The rotation angle $\gamma_i$ is modified using the predefined rotation direction $c_r$.
 
 \begin{equation}
 p^{v}_i = p_i +
@@ -631,11 +644,13 @@ p^{v}_i = p_i +
 (p_d - p_i)
 \label{eq:29}
 \end{equation}
+The virtual goal position $p^v_i$ is calculated by rotating the vector toward the goal by angle $\gamma_i$.
 
 \begin{equation}
 u^{\gamma}_i = -c_{\gamma 1} \cdot \left( c_n \cdot \frac{p_i - p^v_i}{\| p_i - p^v_i \|} \right) - c_{\gamma 2} \, v_i
 \label{eq:30}
 \end{equation}
+The navigation control input $u^{\gamma}_i$ drives the agent toward the virtual goal position with controlled acceleration.
 
 \begin{equation}
 \gamma_i =
@@ -645,11 +660,13 @@ u^{\gamma}_i = -c_{\gamma 1} \cdot \left( c_n \cdot \frac{p_i - p^v_i}{\| p_i - 
 \end{cases}
 \label{eq:31}
 \end{equation}
+The angle $\gamma_i$ defines the rotation required to generate a temporary goal during corner avoidance, depending on the obstacle configuration.
 
 \begin{equation}
 \tau_i = | \epsilon_i | + 90^\circ
 \label{eq:32}
 \end{equation}
+The auxiliary angle $\tau_i$ determines the required deviation angle in a corner, based on the angle $\epsilon_i$ between obstacle edges.
 
 \begin{equation}
 p^v_i = p_i +
@@ -663,6 +680,7 @@ p^v_i = p_i +
 \end{pmatrix}
 \label{eq:33}
 \end{equation}
+The virtual goal $p^v_i$ is defined for precise corner maneuvers and is located relative to the current position and desired direction.
 
 \begin{equation}
 \gamma_i =
@@ -672,6 +690,7 @@ p^v_i = p_i +
 \end{cases}
 \label{eq:34}
 \end{equation}
+The rotation angle $\gamma_i$ is determined based on the obstacle endpoint configuration and whether the obstacle lies to the left or right.
 
 \begin{equation}
 p^v_i = \hat{p}_{i,e} +
@@ -682,11 +701,13 @@ p^v_i = \hat{p}_{i,e} +
 n_{i,e}
 \label{eq:35}
 \end{equation}
+The virtual goal $p^v_i$ is calculated around the last detected obstacle point $\hat{p}_{i,e}$ along a circular path.
 
 \begin{equation}
 | \alpha_i | \leq \delta
 \label{eq:36}
 \end{equation}
+The robot leaves the circular path when its orientation to the goal satisfies this condition.
 
 \begin{equation}
 p^v_i = p_i +
@@ -697,6 +718,7 @@ p^v_i = p_i +
 \cdot e_x \cdot s
 \label{eq:37}
 \end{equation}
+A virtual goal $p^v_i$ is created based on a communicated orientation angle $\theta^c$, used during tangential navigation by information sharing.
 
 \begin{equation}
 \theta_i(t_{k+1}) =
@@ -706,41 +728,49 @@ p^v_i = p_i +
 \end{cases}
 \label{eq:38}
 \end{equation}
+The angle $\theta_i(t_{k+1})$ is adjusted to anticipate obstacle endpoints by modifying the goal orientation based on the relative obstacle side.
 
 \begin{equation}
 \| \tilde{p}_{i,k} - p_i \| < 3 \cdot d_s \wedge \| \tilde{p}_{i,k} - \hat{p}^c_k \| < 3 \cdot d_s
 \label{eq:39}
 \end{equation}
+This condition is used to detect a corner configuration based on the distances between the projected point and obstacle references.
 
 \begin{equation}
 ( p^*_i - p_i ) = -k \cdot ( p^v_i - p_i )
 \label{eq:40}
 \end{equation}
+This equation checks whether the agent has reached the start line for initiating a circular motion around an obstacle.
 
 \begin{equation}
 v^{\text{ref}}_i = \frac{p^v_i - p_i}{\| p^v_i - p_i \|} \cdot \frac{d_s}{r^{\text{max}}_{i,e}} \cdot v_{\text{max}}
 \label{eq:41}
 \end{equation}
+The reference velocity $v^{\text{ref}}_i$ is calculated to control the agent’s speed proportionally to its distance from the obstacle.
 
 \begin{equation}
 u^{\gamma}_{i,e} = -c_{\gamma e} ( v_i - v^{\text{ref}}_i )
 \label{eq:42}
 \end{equation}
+The control input $u^{\gamma}_{i,e}$ guides the agent toward the virtual goal with speed matching the reference velocity.
 
 \begin{equation}
 \omega_{\text{min}} = \frac{v_{\text{max}}}{r^{\text{max}}_{i,e}}
 \label{eq:43}
 \end{equation}
+The minimum angular velocity $\omega_{\text{min}}$ is computed to achieve synchronized circular motion with the largest turning radius.
 
 \begin{equation}
 v^{\text{ref}}_i = \frac{p^v_i - p_i}{\| p^v_i - p_i \|} \cdot \omega_{\text{min}} \cdot r_{i,e}
 \label{eq:44}
 \end{equation}
+The reference velocity $v^{\text{ref}}_i$ is computed to ensure angular velocity consensus during the circular maneuver.
 
 \begin{equation}
 u^{\gamma}_{i,e} = -c_{\gamma e} ( v_i - v^{\text{ref}}_i )
 \label{eq:45}
 \end{equation}
+The control input $u^{\gamma}_{i,e}$ ensures convergence to the reference velocity for synchronized circular motion.
 
 \begin{equation}
 d(i) =
@@ -750,7 +780,7 @@ d(i) =
 \end{cases}
 \label{eq:46}
 \end{equation}
-
+This equation defines the position of an agent projected onto a coordinate axis, used to identify the backmost agent in the group.
 
 \subsection*{Figures and tables}
 \begin{figure*}[htbp]
