@@ -99,23 +99,23 @@ attracts the robot to the target (\eqref{eq:25}).
 
 \subsection*{The problem statement}
 Many existing navigation approaches for multi-robot systems are based on artificial 
-potential fields, in which robots are attracted to target points and repelled by obstacles 
-. However, a central problem with these methods is local minima, in which 
+potential fields, in which robots are attracted to target points and repelled by obstacles. However, a central problem with these methods is local minima, in which 
 attractive and repulsive forces balance each other out and robots get stuck. 
+
 Methods for individual robots, such as camera- or elimination-based approaches, reach their limits in 
 difficult environmental conditions or obstacle configurations.
+
 Furthermore, the challenge for multi-robot systems is to navigate collision-free and 
 efficiently in unknown and complex environments, despite limited 
 sensor and communication ranges. 
 For this reason, this study deals with communication and motion planning 
 for multiple robots,
-whereby noise effects, time delays, or packet loss are not taken into account.
+whereby noise effects, time delays or packet loss are not taken into account.
 
 
 \section{Single robot navigation}
 \label{sec:Single robot navigation}
-Before a robot can act in a swarm, it must be able to cope on its own. To this end, 
-three methods are presented in this section:
+Before a robot can act in a swarm, it must be able to cope on its own. Three methods are presented in this section:
 \begin{itemize}
     \item Tangential navigation, inspired by \cite{Brandao.2013},
     \item Corner avoidance, and
@@ -123,16 +123,12 @@ three methods are presented in this section:
 \end{itemize}
 
 Basically, a robot wants to move to a specified destination while watching out for obstacles within a certain sensor radius \(r_{\mathrm{tan}}\). If it detects an obstacle (represented by the point \( \hat{p}_{i,k} \)), it avoids it by moving parallel to the edge of the obstacle, i.e., tangentially.
-This is done taking into account the angles \( \alpha_i \) and \( \beta_i \) depending on the direction of movement and the resulting rotation angles \( \gamma_i \).
-The robot's position \( \hat{p}_{i,k} \) is determined by the coordinates of the sensor \( \hat{p}_{i,k} \) and the distance \( r_{\mathrm{tan}} \) from the obstacle \( \hat{p}_{i,k} \).
-The robot's This is done taking into account 
-the movement direction-dependent angles \( \alpha_i \) and 
-\( \beta_i \) and the resulting rotation angle \( \gamma_i \). 
+This is done taking into account the angles \( \alpha_i \) and \( \beta_i \) depending on the direction of movement and the resulting rotation angle \( \gamma_i \). 
 These angles determine the evasion direction 
-(\eqref{eq:26} to \eqref{eq:28}) and a virtual target 
+(\eqref{eq:26} to \eqref{eq:28}) and a virtual goal 
 (\eqref{eq:29}). Using an adjusted control force 
-(\eqref{eq:30} similar to \eqref{eq:25}) ,
- the robot is accelerated toward the virtual target $p_i^v$.
+(\eqref{eq:30} similar to \eqref{eq:25}),
+ the robot is accelerated toward the virtual goal $p_i^v$.
 
 \begin{figure}[h]
     \centering
@@ -143,11 +139,11 @@ These angles determine the evasion direction
 
 If the robot detects two obstacles (represented by two points \( \hat{p}_{i,n} \) and \( \hat{p}_{i,n90} \)) 
 that form a corner, it applies the \textit{Corner Avoidance} maneuver. 
-In this maneuver, the rotation angle \( \gamma_i \) is supplemented by an additional angle \( \varepsilon_i \) ,
+In this maneuver, the rotation angle \( \gamma_i \) is supplemented by an additional angle \( \varepsilon_i \),
  which is calculated from the tangent directions $n$ and $n_{90}$ to both obstacle points 
 relative to the robot 
 (\eqref{eq:31} to \eqref{eq:32}). Then,
-a virtual target $p_i^v$ is determined again, which guides the robot out of the corner (\eqref{eq:33}).
+a virtual goal $p_i^v$ is determined again, which guides the robot out of the corner (\eqref{eq:33}).
 
 \begin{figure}[h]
     \centering
@@ -159,9 +155,9 @@ a virtual target $p_i^v$ is determined again, which guides the robot out of the 
 When the robot reaches the end of an obstacle, it performs a 
 circular movement around the end. To do this, it remembers the last 
 obstacle point \( \hat{p}_{i,e} \) that was registered within its sensor radius. Using  
-equation (\eqref{eq:34}) and the angle \( \beta_{i} \), which was obtained by tangential navigation ,
- the robot calculates virtual targets at equal intervals (calculated 
-by equation (\eqref{eq:35}) and represented by the points \( p_i^{v1} \), 
+equation \eqref{eq:34} and the angle \( \beta_{i} \), which was obtained by tangential navigation,
+ the robot calculates virtual goals at equal intervals (calculated 
+by equation \eqref{eq:35} and represented by the points \( p_i^{v1} \), 
 \( p_i^{v2} \) and \( p_d \)) at equal intervals and rotates by a 
 fixed angle \( \delta \) until the angle between the motion vector and the virtual 
 target is less than or equal to \( \delta \) (\eqref{eq:36}).
@@ -177,14 +173,14 @@ target is less than or equal to \( \delta \) (\eqref{eq:36}).
 \section{The proposed navigation approach for a multi-robot system}
 The approach presented here extends the navigation algorithm for individual robots 
 with a communication interface for the collective motion planning of multiple 
-robots. The cohesion of the group could be jeopardized if each robot 
+robots. The cohesion of the group could be at risk if each robot 
 pursues its own virtual goal. Therefore, information about virtual 
 targets and critical points 
 (as shown in Fig.~\ref{fig:The critical points of obstacles}) is exchanged between them. 
 This information is prioritized according to relevance, timeliness, and the principle of "detection before 
 communication" (detected obstacles take precedence over transmitted 
 information from the communication network).
-The communication network consists of information packets, which are divided into three types
+The communication network consists of information packages, which are divided into three types
 : orientation, endpoints, and corners.
 
 \begin{figure}[h]
@@ -197,7 +193,7 @@ The communication network consists of information packets, which are divided int
 \textbf{Orientation (Fig.~\ref{fig:Information about orientation}):} 
 Contains the angle \( \theta_i \) to the current target, the detected 
 point \( \hat{p}_{i,k} \) on the obstacle, the current status of the 
-robot (all statuses explained in Table 1), and the time of obstacle detection.
+robot (all statuses explained in \ref{tab:status}) and the time of obstacle detection.
 
 \textbf{Endpoints (Fig.~\ref{fig:Endpoint and corner Information} (a)):} 
 Consists of the last detected point \( \hat{p}_{i,e} \), the angle \( \omega_{i,e} \) 
@@ -206,8 +202,8 @@ coordinate system\footnote{unaccelerated and subject to the law of inertia
 coordinate system} and the target angle \( \theta_{i,e} \) at the moment of endpoint detection.
 
 \textbf{Corners (Fig.~\ref{fig:Endpoint and corner Information} (b)):} 
-Includes the target angle at entry (\( \theta_{i,\mathrm{ent}} \)) and exit 
-(\( \theta_{i,\mathrm{ex}} \)) from the corner, as well as the corner point \( \hat{p}_{i,c} \), 
+Includes the target angle at entry \( \theta_{i,\mathrm{ent}} \) and exit 
+\( \theta_{i,\mathrm{ex}} \) from the corner, as well as the corner point \( \hat{p}_{i,c} \), 
 which is calculated as the intersection of the detected obstacle lines.
 
 Before a robot performs an action based on the orientation information provided by 
@@ -222,7 +218,7 @@ The distinction is made as follows:
         \mathrm{rel}_t = 10 - \frac{10 \cdot (t_k - \hat{t}^c)}{d_t}
         \label{eq:5}
     \end{equation}
-    determines: the older the information, the less important it is, with 
+    determines: The older the information, the less important it is, with 
     the current time \( t_k \) and the registration time \( \hat{t}^c \) of the information from another 
     robot and \( d_t \in \mathbb{R} \) a constant that makes \( \mathrm{rel_t} \) negative after a
     certain time.
@@ -234,8 +230,8 @@ The distinction is made as follows:
         \mathrm{rel}_{\mathrm{dist}} = 10 - \frac{10 \cdot \| \hat{p}^c - p_i \|}{d_x}
         \label{eq:6}
     \end{equation}
-    where \( d_x \in \mathbb{R} \) is the maximum distance and \( \| \hat{p}^c - p_i \| \) is the distance between the robot ($p_i$) 
-    and the obstacle ($\hat{p}^c$). If it is behind, then with
+    where \( d_x \in \mathbb{R} \) is the maximum distance and \( \| \hat{p}^c - p_i \| \) is the distance between the robot $p_i$ 
+    and the obstacle $\hat{p}^c$. If it is behind, then with
     \begin{equation}
         \mathrm{rel}_{\mathrm{dist}} = - \frac{10 \cdot \| \hat{p}^c - p_i \|}{d_x}
         \label{eq:7}
@@ -251,8 +247,8 @@ The distinction is made as follows:
         \label{eq:8}
     \end{equation}
     describes the relevance of the expected orientation, where 
-    \( |\theta_i(t_k) - \theta^c| \) is the comparison with the current target orientation ($\theta_i(t_k)$) and 
-    the new orientation ($\theta^c$) and \( d_\theta \) is the maximum allowed angle difference, so that
+    \( |\theta_i(t_k) - \theta^c| \) is the comparison with the current target orientation $\theta_i(t_k)$ and 
+    the new orientation $\theta^c$ and \( d_\theta \) is the maximum allowed angle difference, so that
     \( \mathrm{rel}_{\mathrm{exp}} > 0 \).
     
     \item \textbf{Evaluation of the sender:}
@@ -267,8 +263,7 @@ The distinction is made as follows:
     \end{equation}
     
     \item \textbf{Evaluation based on status:}
-    Actions that realign the robot are rated as having the highest relevance. All \textit{status} can be found in Table 1
-    .
+    Actions that realign the robot are rated as having the highest relevance. All \textit{status} can be found in \ref{tab:status}.
     \begin{equation}
         \mathrm{rel}_{\mathrm{type}} =
         \begin{cases}
@@ -290,16 +285,16 @@ where the maximum relevance is calculated by
     \mathrm{rel}_{\mathrm{max}} = \underset{\mathrm{rel}_n \in \mathcal{R}_i}{\mathrm{argmax}}(\mathrm{rel}_n)
     \label{eq:12}
 \end{equation}
-with $n \in \mathcal{S}_i$, the set of all information packets received from the network, and 
-$\mathcal{R}_i$ the set of all relevance values extracted from the information packets for robot $i$.
+with $n \in \mathcal{S}_i$, the set of all information packages received from the network, and 
+$\mathcal{R}_i$ the set of all relevance values extracted from the information packages for robot $i$.
 
-An information packet is ultimately relevant for a robot if the condition
+An information package is ultimately relevant for a robot if the condition
 \begin{equation}
     \mathrm{rel}_n \geq 0.95 \cdot \mathrm{rel}_{\mathrm{max}}
     \label{eq:13}
 \end{equation}
 is satisfied. It then adjusts its 
-direction of movement for the next time step. If several information packets 
+direction of movement for the next time step. If several information packages 
 satisfy this condition, the mean value is determined from them.
 
 For transmitted corners or endpoints, the robot checks its distance $d_s$ with
@@ -359,10 +354,10 @@ robot detects an obstacle within its perception range \( r_{\mathrm{tan}} \), it
 tangential navigation, as with a single robot. This action is referred to as 
 \textbf{status 1}. The information obtained in this process is forwarded to neighboring 
 robots.
-Since the control variable \( u_i^\alpha \) according to equation (\eqref{eq:19}) can cause robots 
+Since the control variable \( u_i^\alpha \) according to equation \eqref{eq:19} can cause robots 
 to move away from each other by repelling each other perpendicular to the obstacle, which could unintentionally 
 trigger a change from \textbf{status 0} to \textbf{1}, an 
-ignorance condition~(\ref{eq:15}) 
+ignorance condition (\eqref{eq:15}) 
 was developed so that robots can ignore obstacles.
 \begin{equation}
     \begin{split}
@@ -376,15 +371,14 @@ If new information from the communication network causes a robot to be
 misaligned and the difference between its current movement 
 and target orientation is greater than 45°, it switches to 
 status 4 to correct its orientation.
-If a robot calculates a virtual target using equation (\eqref{eq:37}) based on the information 
+If a robot calculates a virtual goal using equation \eqref{eq:37} based on the information 
 it has received, it is in \textbf{status 5}.
 To prevent robots from detecting obstacle endpoints too late if they have only been detected 
 by other neighboring robots, a distance estimation with case differentiation 
 (\eqref{eq:40}) is performed.
 To prevent robots from detecting obstacle endpoints too late when these have only 
 been detected by other neighboring robots, a distance estimation is performed with 
-a case distinction (\eqref{eq:30}). This allows the robot to adjust its 
-adjust its target orientation in good time and thus avoid delays in the movement sequence.
+a case distinction (\eqref{eq:30}). This allows the robot to adjust its target orientation timely and thus avoid delays in the movement sequence.
 
 \subsection*{Collective corner avoidance}
 If a robot approaches a corner, it can 
@@ -394,19 +388,19 @@ This action is referred to as \textbf{status 3}.
 
 To ensure that no possible passages 
 (e.g., between two obstacles) are overlooked, the robot first checks the 
-condition (\eqref{eq:39}). Only if this condition is met is the corner recognized as such.
-The robot then defines a new virtual target and switches to \textbf{status 4} 
+condition \eqref{eq:39}. Only if this condition is met is the corner recognized as such.
+The robot then defines a new virtual goal and switches to \textbf{status 4} 
 to realign itself. At the same time, it sends information about the recognized corner 
 to the neighboring robots.
-However, if the condition (\eqref{eq:39}) is not met, the robot initially remains in 
+However, if the condition \eqref{eq:39} is not met, the robot initially remains in 
 waiting state (\textbf{status 6}). In this state, it monitors the communication network 
-of its neighbors. If information with \textbf{status 3} or \textbf{4} is classified as relevant ,
+of its neighbors. If information with \textbf{status 3} or \textbf{4} is classified as relevant,
  the robot adopts it and leaves the waiting state. If, 
 instead, there is relevant information with \textbf{status 1} or \textbf{2}, it adapts accordingly 
 and either follows the tangential navigation or the maneuver at an obstacle endpoint.
 
 \subsection*{Collective motion at obstacle extremities}
-If a robot detects the endpoint of an obstacle, it follows virtual target positions 
+If a robot detects the endpoint of an obstacle, it follows virtual goal positions 
 on a circular path (\textbf{status 2}), as described in 
 Section~\ref{sec:Single robot navigation}. Each 
 robot sets individual targets on this path and shares information about the 
@@ -428,38 +422,30 @@ speed to the minimum speed for circular motion
 according to the scheme presented in 
 Section~\ref{sec:Single robot navigation}.
 
-During the movement, a component from equation (\eqref{eq:19}) ensures that the robot 
+During the movement, a component from equation \eqref{eq:19} ensures that the robot 
 reaches its target on the circular path. If a robot exceeds its 
-virtual target, a new target position is calculated.
+virtual goal, a new target position is calculated.
 
 The robots move on individual circular paths with 
 different radii, which means that inner circles result in shorter paths. 
 The speed consensus for circular motion is based on equal 
 angular velocities. For this purpose, a minimum angular velocity (\eqref{eq:43}) 
-is specified and the control variable from equation (\eqref{eq:19}) is replaced by an 
+is specified and the control variable from equation \eqref{eq:19} is replaced by an 
 adapted control variable 
-from equations (\eqref{eq:44}) and (\eqref{eq:45}). 
+from equations \eqref{eq:44} and \eqref{eq:45}. 
 This allows the robots to circle the end of the obstacle uniformly.
 
 \subsection*{Conditional Braking}
-When several robots in a group perform a circular movement around an obstacle,
- differences in the timing of leaving the circular path can cause speed differences 
- that lead to the group breaking apart.
+When several robots in a group perform a circular movement around an obstacle, differences in the timing of leaving the circular path can cause speed differences that lead to the group breaking apart.
 To prevent this, robots that have already passed the obstacle are slowed down.
 This deceleration remains active until the last robot in the group has left the circular path.
-To determine this last robot, a new coordinate system is defined whose origin is at the 
-end point of the circular path. This deceleration remains active until the last robot in the 
-group has left the circular path.
-
-To determine this last robot, a new coordinate system is defined, 
-whose origin lies at the end point of the obstacle. In this system, the 
+To determine this last robot, a new coordinate system is defined whose origin lies at the end point of the obstacle. In this system, the 
 position of each robot is projected onto the x-axis. Using these projected 
-positions and equation (\eqref{eq:46}), the robots observe their neighborhood and 
+positions and equation \eqref{eq:46}, the robots observe their neighborhood and 
 identify the robot that is furthest behind.
 
 Via gossip-like 
-communication\footnote{local, decentralized, and iterative information exchange}
-, the entire group is informed about this candidate until 
+communication\footnote{local, decentralized, and iterative information exchange}, the entire group is informed about this candidate until 
 all robots have determined the global rear robot. Once 
 this robot has completed its circular movement, it sends a reset signal to 
 release the brakes of the remaining robots and resynchronize the group movement.
@@ -470,7 +456,7 @@ it activates a self-monitoring mechanism called the \textit{watchdog timer}.
 The robot stores its current position and the current time. 
 The timer is deactivated again as soon as the robot moves more than a specified threshold 
 value within the following time steps 
-(the robot assumes that it has left a possible deadlock\footnote{hopeless situation}). 
+(the robot assumes that it has left a possible deadlock\footnote{no-exit situation}). 
 However, if the robot hardly moves for a period of 15 seconds 
 and the timer has not been deactivated, it automatically switches to \textbf{status 0} 
 and moves toward the desired goal. Although this measure can lead to 
@@ -494,46 +480,46 @@ relevant events during the simulation.
 
 In the first scenario (Fig.~\ref{fig:Sequential snapshots of 12 robots collectively navigating through a zigzag obstacle}), the following sequences are shown:
 \begin{itemize}
-\item (a): Detection of an obstacle and start of tangential navigation
-\item (b): Detection of a corner point and execution of the corner avoidance maneuver
-\item (c) and (d): Detection of an end point and initiation of circular movement around the obstacle
-\item (e): Approximation of the robots to the obstacle to optimize navigation using equation (\eqref{eq:46})
-\item (f): Reaching the desired destination point
+\item (a): Detection of an obstacle and start of tangential navigation.
+\item (b): Detection of a corner point and execution of the corner avoidance maneuver.
+\item (c) and (d): Detection of an end point and initiation of circular movement around the obstacle.
+\item (e): Approximation of the robots to the obstacle to optimize navigation using equation \eqref{eq:46}.
+\item (f): Reaching the desired goal.
 \end{itemize}
 
 The same procedures are used in the second corridor scenario (Fig.~\ref{fig:Sequential snapshots of 12 robots collectively navigating through a corridor}).
 
 \subsection*{Guideline for parameter choice}
-The parameters of the relevance function (\eqref{eq:11}) should be selected depending on the 
+The parameters of the relevance function \eqref{eq:11} should be selected depending on the 
 respective scenario. A global behavior of the 
-multi-robot system, in which all robots perform identical actions almost simultaneously ,
+multi-robot system, in which all robots perform identical actions almost simultaneously,
  is suitable for smaller systems with six to twelve 
 robots if their distribution in relation to the obstacles 
-is low. In this case, the relevance of the time of the information packet 
-(\texttt{relt}) and the relevance of the action status (\texttt{reltype}) should be weighted higher 
+is low. In this case, the relevance of the time of the information package 
+($\mathrm{rel}_{\mathrm{t}}$) and the relevance of the action status ($\mathrm{rel}_{\mathrm{type}}$) should be weighted higher 
 than the other values so that robots react uniformly and as synchronously as possible
 to current events in the communication network.
 
 However, with an increasing number of robots or a denser obstacle constellation, 
 such global behavior can be problematic, as individual 
-robots could receive several relevant information packets at the same time. 
+robots could receive several relevant information packages at the same time. 
 In these situations, robots should pay more attention to their own position and local 
 information. To this end, the relevance of the distance to the obstacle 
-(\texttt{reldist}), the relevance of the expected orientation for the next action 
-(\texttt{relexp}), and the relevance of the sender of the information (\texttt{relo}) 
-are weighted more heavily than \texttt{relt} and \texttt{reltype}.
+($\mathrm{rel}_{\mathrm{dist}}$), the relevance of the expected orientation for the next action 
+($\mathrm{rel}_{\mathrm{exp}}$) and the relevance of the sender of the information ($\mathrm{rel}_{\mathrm{o}}$) 
+are weighted more heavily than $\mathrm{rel}_{\mathrm{t}}$ and $\mathrm{rel}_{\mathrm{type}}$.
 
 The effects of these different weightings are shown in the following figures:
 \begin{itemize}
 \item Fig.~\ref{fig:Sequential snapshots of 20 robots collectively navigating around two 
 circular obstacles} 
 shows a \textit{squeezing maneuver} in which the 
-group of robots moves between two circular obstacles.
+group of robots move between two circular obstacles.
 \item Fig.~\ref{fig:Sequential snapshots of 20 robots collectively navigating around a 
 semi circular obstacle} 
 shows how a semicircular obstacle 
 divides the group. The robots then correct their direction of movement 
-by checking and adjusting their current action status.
+by checking and adjusting their current action statuses.
 \item Fig.~\ref{fig:Sequential snapshots of 20 robots collectively navigating around 
 small circular obstacles} illustrates that prioritized 
 obstacle avoidance causes fragmentation of the group. 
@@ -543,13 +529,12 @@ Nevertheless, all robots ultimately reach the desired destination.
 
 \section{Conclusion}
 In this work, a method for collective navigation of autonomous robots in unknown environments 
-was developed. The approach combines a tangential avoidance strategy with the exchange of local 
+was developed. The approach combines a tangential navigation strategy with the exchange of local 
 environmental information via a communication network. Collision-free and coordinated movements 
-of the robots are enabled by artificial potential forces that generate swarm-like behavior. 
+of the robots are enabled by virtual potential field-based forces that generate swarm-like behavior. 
 Targeted adjustment of the relevance function parameters and weighting can prevent fragmentation 
 of the group. Individual robots retain the ability to reach their destination even without 
-group connection. For holonomic\footnote{Position can be changed independently of orientation} 
-robots, a sufficiently large safety distance and reduced speed are particularly crucial. 
+group connection. For robots whose position can be changed independently of their orientation, a sufficiently large safety distance and reduced speed are particularly crucial. 
 Future work will address real-time implementation, optimization of wireless communication, 
 and alternative network structures for the robots.
 
